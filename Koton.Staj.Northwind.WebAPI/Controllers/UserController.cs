@@ -1,5 +1,4 @@
 ﻿using Koton.Staj.Northwind.Business.Abstract;
-using Koton.Staj.Northwind.Business.Utilities;
 using Koton.Staj.Northwind.Entities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,14 +23,16 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
         public IActionResult Authenticate(User user)
         {
             var response = _userService.AuthenticateUser(user);
-            return StatusCode(response.StatusCode, response);
+            return Ok(response); 
+
         }
 
         [HttpPost("/api/register")]
         public IActionResult Register(User user)
         {
             var response = _userService.RegisterUser(user);
-            return StatusCode(response.StatusCode, response);
+            return Ok(response);
+
         }
 
 

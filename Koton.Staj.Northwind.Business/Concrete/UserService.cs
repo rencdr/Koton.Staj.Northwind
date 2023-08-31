@@ -65,8 +65,9 @@ namespace Koton.Staj.Northwind.Business.Concrete
 
                 return new ResponseModel
                 {
-                    //StatusCode = 200,
-                    Message = Messages.SuccessMessage,
+                    
+                    Success = true,
+                    Message = Messages.SUCCESS_MESSAGE,
                     Data = new { Token = tokenHandler.WriteToken(token) }
                 };
 
@@ -75,8 +76,9 @@ namespace Koton.Staj.Northwind.Business.Concrete
             {
                 return new ResponseModel
                 {
-                    //StatusCode = 401,
-                    Message = Messages.InvalidCredentialsMessage,
+                    
+                    Success = false,
+                    Message = Messages.INVALID_CREDENTIALS_MESSAGE,
                     Data = null
                 };
             }
@@ -91,8 +93,9 @@ namespace Koton.Staj.Northwind.Business.Concrete
             {
                 return new ResponseModel
                 {
-                    //StatusCode = 400,
-                    Message = Messages.UsernameAlreadyExistsMessage,
+                    
+                    Success = false,
+                    Message = Messages.USERNAME_ALREADY_EXISTS_MESSAGE,
                     Data = null
                 };
             }
@@ -107,8 +110,8 @@ namespace Koton.Staj.Northwind.Business.Concrete
             var createdUser = CreateUserAsync(newUser).Result;
 
             return createdUser != null
-                ? new ResponseModel { Message = Messages.SuccessMessage, Data = createdUser }
-                : new ResponseModel { Message = Messages.UserRegistrationFailedMessage, Data = null };
+                ? new ResponseModel {Success = true, Message = Messages.SUCCESS_MESSAGE, Data = createdUser }
+                : new ResponseModel {Success = false, Message = Messages.USER_REGISTRATION_FAILED_MESSAGE, Data = null };
         }
     }
 }

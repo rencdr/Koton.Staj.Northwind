@@ -51,40 +51,6 @@ namespace Koton.Staj.Data.Concrete
 
                 return connection.Query<Cart>(query, new { UserId = userId }).ToList();
             }
-            //public List<Cart> GetCartItems(int userId)
-            //{
-            //    using (var connection = new SqlConnection(_connectionString))
-            //    {
-            //        var query = @"
-            //    SELECT C.UserId, P.ProductId, P.ProductName, C.Quantity, P.UnitPrice,
-            //           C.Quantity * P.UnitPrice AS TotalPrice,
-            //           TotalCart.TotalCartAmount
-            //    FROM Carts AS C
-            //    INNER JOIN Products AS P ON C.ProductId = P.ProductID
-            //    OUTER APPLY (
-            //        SELECT SUM(Cart.Quantity * Product.UnitPrice) AS TotalCartAmount
-            //        FROM Carts AS Cart
-            //        INNER JOIN Products AS Product ON Cart.ProductId = Product.ProductID
-            //        WHERE Cart.UserId = C.UserId
-            //    ) AS TotalCart
-            //    WHERE C.UserId = @UserId;
-            //";
-            //        return connection.Query<Cart>(query, new { UserId = userId }).ToList();
-            //    }
-            //}
-
-
-
-
-
-            //public void RemoveFromCart(int userId, int productId)
-            //{
-            //    using (var connection = new SqlConnection(_connectionString))
-            //    {
-            //        var query = "DELETE FROM Carts WHERE UserId = @UserId AND ProductId = @ProductId";
-            //        connection.Execute(query, new { UserId = userId, ProductId = productId });
-            //    }
-            //}
 
 
         }

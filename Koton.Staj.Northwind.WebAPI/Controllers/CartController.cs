@@ -1,5 +1,4 @@
 ﻿using Koton.Staj.Northwind.Business.Abstract;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Koton.Staj.Northwind.Entities;
 using Koton.Staj.Northwind.Business.Abstract;
@@ -37,23 +36,10 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
                 return BadRequest(new { Message = "An error occurred: " + ex.Message });
             }
         }
-        //[HttpPost("addProductToCart")]
-        //public IActionResult AddToCart(Cart cartItem)
-        //{
-
-        //    try
-        //    {
-        //        _cartService.AddToCart(cartItem);
-        //        return Ok(new { Message = "Product added to cart successfully" });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(new { Message = "An error occurred: " + ex.Message });
-        //    }
-        //}
+ 
 
 
-        [HttpGet("displayCart{userId}")]
+        [HttpGet("/api/carts/userId/{userId}")]
         public IActionResult GetCartItems(int userId)
         {
             try

@@ -8,11 +8,11 @@ namespace Koton.Staj.Northwind.Business.Utilities
 {
     internal class Messages
     {
-        //büyükharf _
-        internal const string SuccessMessage = "Success";
-        internal const string InvalidCredentialsMessage = "Invalid username or password.";
-        internal const string UsernameAlreadyExistsMessage = "Username already exists.";
-        internal const string UserRegistrationFailedMessage = "User registration failed.";
+        internal const string SUCCESS_MESSAGE = "Success";
+        internal const string INVALID_CREDENTIALS_MESSAGE = "Invalid username or password.";
+        internal const string USERNAME_ALREADY_EXISTS_MESSAGE = "Username already exists.";
+        internal const string USER_REGISTRATION_FAILED_MESSAGE = "User registration failed.";
+
 
 
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using Koton.Staj.Data.Abstract;
 using Koton.Staj.Northwind.Business.Abstract;
 using Koton.Staj.Northwind.Data.Abstract;
@@ -25,12 +21,7 @@ namespace Koton.Staj.Northwind.Business.Concrete
             _productRepository = productRepository;
             _connectionString = configuration["ConnectionStrings:SqlServerDb"];
         }
-        //private readonly ICartRepository _cartRepository;
 
-        //public CartService(ICartRepository cartRepository)
-        //{
-        //    _cartRepository = cartRepository;
-        //}
         public void AddToCart(AddToCartDto cartItem)
         {
             var cart = new Cart
@@ -41,10 +32,7 @@ namespace Koton.Staj.Northwind.Business.Concrete
             };
             _cartRepository.AddToCart(cart);
         }
-        //public void AddToCart(Cart cartItem)
-        //{
-        //    _cartRepository.AddToCart(cartItem);
-        //}
+
         public List<DisplayCartDto> GetCartItems(int userId)
         {
             var carts = _cartRepository.GetCartItems(userId);
@@ -62,7 +50,7 @@ namespace Koton.Staj.Northwind.Business.Concrete
                     Quantity = cart.Quantity,
                     ProductName = product.ProductName,
                     UnitPrice = product.UnitPrice,
-                    CategoryName = cart.CategoryName, // Product sınıfından CategoryName 
+                    CategoryName = cart.CategoryName,  
                     Description = cart.Description,
                     TotalCartAmount = cart.TotalCartAmount
                 };
@@ -72,10 +60,7 @@ namespace Koton.Staj.Northwind.Business.Concrete
 
             return displayCartDtos;
         }
-        //public List<Cart> GetCartItems(int userId)
-        //{
-        //    return _cartRepository.GetCartItems(userId);
-        //}
+ 
 
         public void RemoveFromCart(int userId, int productId)
         {
