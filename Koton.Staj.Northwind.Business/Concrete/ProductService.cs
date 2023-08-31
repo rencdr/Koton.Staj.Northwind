@@ -3,7 +3,7 @@ using Koton.Staj.Northwind.Business.Abstract;
 using Koton.Staj.Northwind.Entities;
 using Koton.Staj.Northwind.Data.Abstract;
 using Koton.Staj.Northwind.Business.Utilities;
-
+using Koton.Staj.Northwind.Entities.Dtos;
 
 namespace Koton.Staj.Northwind.Business.Concrete
 {
@@ -16,20 +16,71 @@ namespace Koton.Staj.Northwind.Business.Concrete
         {
             _productRepository = productRepository;
         }
-        public IEnumerable<Product> GetAllProducts()
-        {
 
-            return _productRepository.GetAllProducts();
-        }
-        //
-        public IEnumerable<Product> GetAllProductsOrderByDescendingPrice()
+        public IEnumerable<ProductDto> GetAllProducts()
         {
-            return _productRepository.GetAllProductsOrderByDescendingPrice();
+            var products = _productRepository.GetAllProducts();
+
+            var productDtos = products.Select(p => new ProductDto
+            {
+                ProductName = p.ProductName,
+                UnitPrice = p.UnitPrice,
+                CategoryName = p.CategoryName,
+                Description = p.Description
+            });
+
+            return productDtos;
         }
-        public IEnumerable<Product> GetAllProductsOrderByAscendingPrice()
+
+        public IEnumerable<ProductDto> GetAllProductsOrderByDescendingPrice()
         {
-            return _productRepository.GetAllProductsOrderByAscendingPrice();
+            var products = _productRepository.GetAllProductsOrderByDescendingPrice();
+
+            var productDtos = products.Select(p => new ProductDto
+            {
+                ProductName = p.ProductName,
+                UnitPrice = p.UnitPrice,
+                CategoryName = p.CategoryName,
+                Description = p.Description
+            });
+
+            return productDtos;
         }
+
+        public IEnumerable<ProductDto> GetAllProductsOrderByAscendingPrice()
+        {
+            var products = _productRepository.GetAllProductsOrderByAscendingPrice();
+
+            var productDtos = products.Select(p => new ProductDto
+            {
+                ProductName = p.ProductName,
+                UnitPrice = p.UnitPrice,
+                CategoryName = p.CategoryName,
+                Description = p.Description
+            });
+
+            return productDtos;
+        }
+        //private readonly IProductRepository _productRepository;
+
+        //public ProductService(IProductRepository productRepository)
+        //{
+        //    _productRepository = productRepository;
+        //}
+        //public IEnumerable<Product> GetAllProducts()
+        //{
+
+        //    return _productRepository.GetAllProducts();
+        //}
+        ////
+        //public IEnumerable<Product> GetAllProductsOrderByDescendingPrice()
+        //{
+        //    return _productRepository.GetAllProductsOrderByDescendingPrice();
+        //}
+        //public IEnumerable<Product> GetAllProductsOrderByAscendingPrice()
+        //{
+        //    return _productRepository.GetAllProductsOrderByAscendingPrice();
+        //}
 
 
     }

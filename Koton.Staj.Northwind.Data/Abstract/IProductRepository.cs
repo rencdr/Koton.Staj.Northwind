@@ -11,6 +11,8 @@ namespace Koton.Staj.Northwind.Data.Abstract
 
         IEnumerable<Product> GetAllProductsOrderByAscendingPrice();
 
+        Product GetProductById(int productId);
+
 
     }
 }

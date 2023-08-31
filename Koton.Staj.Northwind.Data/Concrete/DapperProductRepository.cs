@@ -46,5 +46,13 @@ namespace Koton.Staj.Northwind.Data.Concrete
                 return connection.Query<Product>(sql);
             }
         }
+        public Product GetProductById(int productId)
+        {
+            using (IDbConnection connection = new SqlConnection(_connectionString))
+            {
+                string sql = $"SELECT * FROM Products WHERE ProductId = @ProductId";
+                return connection.QuerySingleOrDefault<Product>(sql, new { ProductId = productId });
+            }
+        }
     }
 }

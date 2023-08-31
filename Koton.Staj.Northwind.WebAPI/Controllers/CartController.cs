@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Koton.Staj.Northwind.Entities;
 using Koton.Staj.Northwind.Business.Abstract;
-
+using Koton.Staj.Northwind.Entities.Dtos;
 
 namespace Koton.Staj.Northwind.WebAPI.Controllers
 {
@@ -19,14 +19,17 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
         }
 
 
-
         [HttpPost("addProductToCart")]
-        public IActionResult AddToCart(Cart cartItem)
+        public IActionResult AddToCart(AddToCartDto cartItem)
         {
 
             try
             {
+                int userId = cartItem.UserId;
+                int productId = cartItem.ProductId;
+                int quantity = cartItem.Quantity;
                 _cartService.AddToCart(cartItem);
+
                 return Ok(new { Message = "Product added to cart successfully" });
             }
             catch (Exception ex)
@@ -34,6 +37,20 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
                 return BadRequest(new { Message = "An error occurred: " + ex.Message });
             }
         }
+        //[HttpPost("addProductToCart")]
+        //public IActionResult AddToCart(Cart cartItem)
+        //{
+
+        //    try
+        //    {
+        //        _cartService.AddToCart(cartItem);
+        //        return Ok(new { Message = "Product added to cart successfully" });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new { Message = "An error occurred: " + ex.Message });
+        //    }
+        //}
 
 
         [HttpGet("displayCart{userId}")]
