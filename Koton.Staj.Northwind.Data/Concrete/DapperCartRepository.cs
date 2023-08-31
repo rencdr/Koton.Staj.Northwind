@@ -5,6 +5,7 @@ using Dapper;
 using Koton.Staj.Northwind.Data.Abstract;
 using System.Data.SqlClient;
 using Koton.Staj.Data.Abstract;
+using Koton.Staj.Northwind.Data.Queries;
 
 namespace Koton.Staj.Data.Concrete
 {
@@ -23,7 +24,7 @@ namespace Koton.Staj.Data.Concrete
         {
             using (var connection = new SqlConnection(_connectionString))
             {
-                var query = "INSERT INTO Carts (UserId, ProductId, Quantity) VALUES (@UserId, @ProductId, @Quantity)";
+                var query = CartQueries.ADD_TO_CART_QUERY;
                 connection.Execute(query, cartItem);
 
             }
@@ -32,22 +33,7 @@ namespace Koton.Staj.Data.Concrete
         {
             using (var connection = new SqlConnection(_connectionString))
             {
-                var query = @"
-    SELECT C.UserId, P.ProductId, P.ProductName, C.Quantity, P.UnitPrice,
-           C.Quantity * P.UnitPrice AS TotalPrice,
-           TotalCart.TotalCartAmount,
-           Cat.CategoryName, Cat.Description
-    FROM Carts AS C
-    INNER JOIN Products AS P ON C.ProductId = P.ProductID
-    INNER JOIN Categories AS Cat ON P.CategoryID = Cat.CategoryID
-    OUTER APPLY (
-        SELECT SUM(Cart.Quantity * Product.UnitPrice) AS TotalCartAmount
-        FROM Carts AS Cart
-        INNER JOIN Products AS Product ON Cart.ProductId = Product.ProductID
-        WHERE Cart.UserId = C.UserId
-    ) AS TotalCart
-    WHERE C.UserId = @UserId;
-";
+                var query = CartQueries.GET_CART_ITEMS_QUERY;
 
                 return connection.Query<Cart>(query, new { UserId = userId }).ToList();
             }
@@ -59,7 +45,7 @@ namespace Koton.Staj.Data.Concrete
         {
             using (var connection = new SqlConnection(_connectionString))
             {
-                var query = "DELETE FROM Carts WHERE UserId = @UserId AND ProductId = @ProductId";
+                var query = CartQueries.REMOVE_FROM_CART_QUERY;
                 connection.Execute(query, new { UserId = userId, ProductId = productId });
             }
         }
