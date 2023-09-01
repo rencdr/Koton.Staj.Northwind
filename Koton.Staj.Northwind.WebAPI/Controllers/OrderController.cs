@@ -1,6 +1,7 @@
 ﻿using Koton.Staj.Northwind.Business.Abstract;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Koton.Staj.Northwind.Entities;
 
 namespace Koton.Staj.Northwind.WebAPI.Controllers
 {
@@ -33,10 +34,4 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
         }
     }
 
-    public class OrderRequestModel
-    {
-        public int UserId { get; set; }
-        public string UserAddress { get; set; }
-        public string UserPhoneNumber { get; set; }
-    }
 }

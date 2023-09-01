@@ -56,7 +56,7 @@ namespace Koton.Staj.Northwind.Business.Concrete
                         return new ResponseModel
                         {
                             Success = true,
-                            Message = "Sipariş başarıyla oluşturuldu",
+                            Message = Messages.ORDER_CREATED_SUCCESS,
                             Data = null
                         };
                     }
@@ -65,7 +65,7 @@ namespace Koton.Staj.Northwind.Business.Concrete
                         return new ResponseModel
                         {
                             Success = false,
-                            Message = "Sipariş oluşturulurken bir hata oluştu.",
+                            Message = Messages.ORDER_CREATES_FAILED,
                             Data = ex.Message 
                         };
                     }
@@ -76,7 +76,7 @@ namespace Koton.Staj.Northwind.Business.Concrete
                 return new ResponseModel
                 {
                     Success = false,
-                    Message = "Kullanıcı için sepet öğesi bulunamadı.",
+                    Message = Messages.CART_NOT_FOUND,
                     Data = null
                 };
             }

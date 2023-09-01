@@ -56,12 +56,10 @@ namespace Koton.Staj.Data.Concrete
         {
             using (var connection = new SqlConnection(_connectionString))
             {
-                var query = "DELETE FROM Carts WHERE UserId = @UserId";
+                var query = CartQueries.DELETE_CART_QUERY;
                 connection.Execute(query, new { UserId = userId });
             }
         }
-
-
 
 
         public Cart GetCartByUserId(int userId)
@@ -69,7 +67,7 @@ namespace Koton.Staj.Data.Concrete
             using var connection = new SqlConnection(_connectionString);
             connection.Open();
 
-            string query = "SELECT TOP 1 * FROM Carts WHERE UserId = @UserId";
+            string query = CartQueries.GET_CART_BY_USERID_QUERY;
             return connection.QueryFirstOrDefault<Cart>(query, new { UserId = userId });
         }
 
@@ -77,7 +75,7 @@ namespace Koton.Staj.Data.Concrete
         {
             using (var connection = new SqlConnection(_connectionString))
             {
-                var query = "SELECT * FROM Carts WHERE UserId = @UserId";
+                var query = CartQueries.GET_CART_BY_USERID_QUERY;
                 return connection.Query<Cart>(query, new { UserId = userId });
             }
         }
