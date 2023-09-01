@@ -49,5 +49,22 @@ namespace Koton.Staj.Data.Concrete
                 connection.Execute(query, new { UserId = userId, ProductId = productId });
             }
         }
+
+
+
+        public void DeleteCartByUserId(int userId)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var query = "DELETE FROM Carts WHERE UserId = @UserId";
+                connection.Execute(query, new { UserId = userId });
+            }
+        }
+
+
+
+
+
+
     }
 }

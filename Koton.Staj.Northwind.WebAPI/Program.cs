@@ -25,6 +25,8 @@ builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IUserRepository, DapperUserRepository>();
 builder.Services.AddTransient<ICartService, CartService>();
 builder.Services.AddTransient<ICartRepository, DapperCartRepository>();
+builder.Services.AddTransient<IOrderService, OrderService>();
+builder.Services.AddTransient<IUserOrderRepository, DapperUserOrderRepository>();
 
 // Add services to the container.
 

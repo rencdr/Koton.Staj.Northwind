@@ -10,7 +10,7 @@ namespace Koton.Staj.Data.Abstract
         void RemoveFromCart(int userId, int productId);
         List<Cart> GetCartItems(int userId);
 
-
+        void DeleteCartByUserId(int userId);
 
     }
 }

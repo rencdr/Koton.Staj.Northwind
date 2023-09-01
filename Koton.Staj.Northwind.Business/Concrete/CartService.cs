@@ -33,6 +33,11 @@ namespace Koton.Staj.Northwind.Business.Concrete
             _cartRepository.AddToCart(cart);
         }
 
+        public void DeleteCartByUserId(int userId)
+        {
+            _cartRepository.DeleteCartByUserId(userId);
+        }
+
         public List<DisplayCartDto> GetCartItems(int userId)
         {
             var carts = _cartRepository.GetCartItems(userId);

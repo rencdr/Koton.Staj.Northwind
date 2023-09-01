@@ -9,6 +9,8 @@ namespace Koton.Staj.Northwind.Business.Abstract
         void AddToCart(AddToCartDto cartItem);
         void RemoveFromCart(int userId, int productId);
         List<DisplayCartDto> GetCartItems(int userId);
+        void DeleteCartByUserId(int userId);
+
 
     }
 }

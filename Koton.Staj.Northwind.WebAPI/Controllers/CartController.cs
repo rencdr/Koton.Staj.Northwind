@@ -36,7 +36,7 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
                 return BadRequest(new { Message = "An error occurred: " + ex.Message });
             }
         }
- 
+
 
 
         [HttpGet("/api/carts/userId/{userId}")]
@@ -62,6 +62,20 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
             {
                 _cartService.RemoveFromCart(userId, productId);
                 return Ok(new { Message = "Product removed from cart successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = "An error occurred: " + ex.Message });
+            }
+        }
+        
+        [HttpDelete("clearCart")]
+        public IActionResult ClearCart(int userId)
+        {
+            try
+            {
+                _cartService.DeleteCartByUserId(userId);
+                return Ok(new { Message = "Cart cleared successfully" });
             }
             catch (Exception ex)
             {
