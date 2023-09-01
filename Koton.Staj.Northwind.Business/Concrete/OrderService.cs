@@ -40,6 +40,7 @@ namespace Koton.Staj.Northwind.Business.Concrete
                                 CartId = cart.CartId,
                                 UserId = userId,
                                 Quantity = cart.Quantity,
+                                ProductId = cart.ProductId,// yeni eklenen sütun
                                 UserAddress = userAddress,
                                 UserPhoneNumber = userPhoneNumber,
                                 OrderDate = DateTime.Now

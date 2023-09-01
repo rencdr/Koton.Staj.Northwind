@@ -22,8 +22,8 @@ namespace Koton.Staj.Northwind.Data.Concrete
             connection.Open();
 
             string query = @"
-INSERT INTO UserOrders (CartId, UserId,  Quantity, UserAddress, UserPhoneNumber, OrderDate)
-VALUES (@CartId, @UserId, @Quantity, @UserAddress, @UserPhoneNumber, @OrderDate)";
+INSERT INTO UserOrders (CartId, UserId,  Quantity, ProductId, UserAddress, UserPhoneNumber, OrderDate)
+VALUES (@CartId, @UserId, @Quantity, @ProductId, @UserAddress, @UserPhoneNumber, @OrderDate)";
 
 
             connection.Execute(query, userOrder);

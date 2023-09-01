@@ -11,7 +11,7 @@ namespace Koton.Staj.Northwind.Entities
         public int OrderId { get; set; }
         public int CartId { get; set; }
         public int UserId { get; set; }
-        //public int ProductId { get; set; } // Yeni eklenen sütun
+        public int ProductId { get; set; } // Yeni eklenen sütun
 
         public int Quantity { get; set; }
         public string UserAddress { get; set; }
