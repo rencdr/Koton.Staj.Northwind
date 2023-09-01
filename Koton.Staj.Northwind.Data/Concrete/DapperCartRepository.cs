@@ -64,6 +64,23 @@ namespace Koton.Staj.Data.Concrete
 
 
 
+        public Cart GetCartByUserId(int userId)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            connection.Open();
+
+            string query = "SELECT TOP 1 * FROM Carts WHERE UserId = @UserId";
+            return connection.QueryFirstOrDefault<Cart>(query, new { UserId = userId });
+        }
+
+        public IEnumerable<Cart> GetCartsByUserId(int userId)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var query = "SELECT * FROM Carts WHERE UserId = @UserId";
+                return connection.Query<Cart>(query, new { UserId = userId });
+            }
+        }
 
 
     }

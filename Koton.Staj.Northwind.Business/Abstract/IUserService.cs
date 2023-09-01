@@ -8,7 +8,6 @@ namespace Koton.Staj.Northwind.Business.Abstract
     {
         Task<User> CreateUserAsync(User user);
         Task<User> GetUserByUsernameAsync(string username);
-
         ResponseModel AuthenticateUser(User user);
         ResponseModel RegisterUser(User user);
 

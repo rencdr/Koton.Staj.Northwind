@@ -12,5 +12,9 @@ namespace Koton.Staj.Data.Abstract
 
         void DeleteCartByUserId(int userId);
 
+        Cart GetCartByUserId(int userId);
+        IEnumerable<Cart> GetCartsByUserId(int userId);
+
+
     }
 }

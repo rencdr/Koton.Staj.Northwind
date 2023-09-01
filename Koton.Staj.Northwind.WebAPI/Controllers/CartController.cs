@@ -39,8 +39,8 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
 
 
 
-        [HttpGet("/api/carts/userId/{userId}")]
-        public IActionResult GetCartItems(int userId)
+        [HttpGet]
+        public IActionResult GetCartItems([FromQuery]int userId)
         {
             try
             {

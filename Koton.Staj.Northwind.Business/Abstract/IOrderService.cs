@@ -5,6 +5,8 @@ namespace Koton.Staj.Northwind.Business.Abstract
 {
     public interface IOrderService
     {
+        ResponseModel CreateOrder(int userId, string userAddress, string userPhoneNumber);
+
 
     }
 }

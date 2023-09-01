@@ -65,7 +65,13 @@ namespace Koton.Staj.Northwind.Business.Concrete
 
             return displayCartDtos;
         }
- 
+
+        public IEnumerable<Cart> GetCartsByUserId(int userId)
+        {
+              return _cartRepository.GetCartsByUserId(userId);
+        }
+
+
 
         public void RemoveFromCart(int userId, int productId)
         {
