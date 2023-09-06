@@ -17,6 +17,8 @@ namespace Koton.Staj.Northwind.Entities
         public string UserAddress { get; set; }
         public string UserPhoneNumber { get; set; }
         public DateTime OrderDate { get; set; }
+        public TimeZoneInfo OrderTimeZone { get; set; }
+
     }
 
 }

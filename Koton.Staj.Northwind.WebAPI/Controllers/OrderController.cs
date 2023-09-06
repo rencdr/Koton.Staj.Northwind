@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Koton.Staj.Northwind.Entities;
 using Koton.Staj.Northwind.Data.Abstract;
+using Koton.Staj.Northwind.Business.Concrete;
 
 namespace Koton.Staj.Northwind.WebAPI.Controllers
 {
@@ -55,9 +56,41 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
 
             return Ok(orders); //  200 OK  döndür
         }
+
+        //[HttpDelete("cancel/{orderId}")]
+        //public IActionResult CancelOrder(int orderId)
+        //{
+        //    Console.WriteLine("Cancel isteğine yapıldı."); //
+
+        //    var order = _userOrderRepository.GetOrderById(orderId);
+
+
+
+
+        //    if (order == null)
+        //    {
+        //        return NotFound("Order not found");
+        //    }
+
+        //    var result = _orderService.CancelOrder(orderId);
+
+
+        //    try
+        //    {
+        //        _userOrderRepository.CancelUserOrder(orderId);
+
+        //        return Ok("Order canceled successfully");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest($"Failed to cancel order: {ex.Message}");
+        //    }
+        //}
         [HttpDelete("cancel/{orderId}")]
         public IActionResult CancelOrder(int orderId)
         {
+            Console.WriteLine("Cancel isteğine yapıldı."); //
+
             var order = _userOrderRepository.GetOrderById(orderId);
 
             if (order == null)
@@ -65,15 +98,15 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
                 return NotFound("Order not found");
             }
 
-            try
-            {
-                _userOrderRepository.CancelUserOrder(orderId);
+            var result = _orderService.CancelOrder(orderId);
 
-                return Ok("Order canceled successfully");
-            }
-            catch (Exception ex)
+            if (result.Success)
             {
-                return BadRequest($"Failed to cancel order: {ex.Message}");
+                return Ok(result.Message);
+            }
+            else
+            {
+                return BadRequest(result.Message);
             }
         }
 

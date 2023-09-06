@@ -47,7 +47,7 @@ namespace Koton.Staj.Northwind.Data.Concrete
         {
             using (IDbConnection dbConnection = new SqlConnection(_connectionString))
             {
-                string deleteQuery = "DELETE FROM UserOrders WHERE OrderId = @OrderId AND OrderDate >= DATEADD(HOUR, -3, GETDATE())\r\n";
+                string deleteQuery = "DELETE FROM UserOrders WHERE OrderId = @OrderId ";
                 dbConnection.Execute(deleteQuery, new { OrderId = orderId });
             }
         }

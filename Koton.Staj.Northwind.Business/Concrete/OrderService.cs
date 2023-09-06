@@ -87,9 +87,11 @@ namespace Koton.Staj.Northwind.Business.Concrete
         }
         public ResponseModel CancelOrder(int orderId)
         {
+            Console.WriteLine("CancelOrder metoduna girildi."); 
+
             try
             {
-
+                // İptal edilecek siparişi alın
                 UserOrder orderToCancel = _userOrderRepository.GetOrderById(orderId);
 
                 if (orderToCancel == null)
@@ -103,8 +105,14 @@ namespace Koton.Staj.Northwind.Business.Concrete
                 }
 
                 // Siparişin iptal edilebilir olup olmadığını kontrol et
-                DateTime currentTime = DateTime.Now;
-                TimeSpan timeElapsed = currentTime - orderToCancel.OrderDate;
+                // OrderDate'i UTC saat dilimine çevir
+                DateTime orderUtcTime = TimeZoneInfo.ConvertTimeToUtc(orderToCancel.OrderDate);
+
+                // Şu anki tarihi UTC saat dilimine çevir
+                DateTime currentUtcTime = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now);
+
+                // Saat farkını hesapla
+                TimeSpan timeElapsed = currentUtcTime - orderUtcTime;
 
                 if (timeElapsed.TotalHours > 3)
                 {
@@ -116,7 +124,7 @@ namespace Koton.Staj.Northwind.Business.Concrete
                     };
                 }
 
-
+                // Eğer sipariş iptal edilebilirse, iptal işlemini gerçekleştirin
                 _userOrderRepository.CancelUserOrder(orderId);
 
                 return new ResponseModel
@@ -131,11 +139,15 @@ namespace Koton.Staj.Northwind.Business.Concrete
                 return new ResponseModel
                 {
                     Success = false,
-                    Message = "Sipariş iptali sırasında bir hata oluştu: " + ex.Message, // Hata durumunda uygun bir hata mesajı döndürün
+                    Message = "Sipariş iptali sırasında bir hata oluştu: " + ex.Message,
                     Data = null
                 };
             }
         }
+
+
+
+
     }
 }
 
