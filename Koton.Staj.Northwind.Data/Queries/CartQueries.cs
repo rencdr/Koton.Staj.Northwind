@@ -27,6 +27,6 @@ namespace Koton.Staj.Northwind.Data.Queries
 ";
         internal const string REMOVE_FROM_CART_QUERY = @"DELETE FROM Carts WHERE UserId = @UserId AND ProductId = @ProductId";
         internal const string DELETE_CART_QUERY = "DELETE FROM Carts WHERE UserId = @UserId";
-        internal const string GET_CART_BY_USERID_QUERY = "DELETE FROM Carts WHERE UserId = @UserId";
+        internal const string GET_CART_BY_USERID_QUERY = "SELECT * FROM Carts WHERE UserId = @UserId";
     }
 }

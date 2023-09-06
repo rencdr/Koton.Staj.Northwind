@@ -12,20 +12,18 @@ namespace Koton.Staj.Northwind.Business.Concrete
     {
         private readonly ICartRepository _cartRepository;
         private readonly IUserOrderRepository _userOrderRepository;
-        private readonly string _connectionString;
-        private readonly ICartService _cartService;
 
-        public OrderService(ICartRepository cartRepository, IUserOrderRepository userOrderRepository, IConfiguration configuration, ICartService cartService)
+        public OrderService(ICartRepository cartRepository, IUserOrderRepository userOrderRepository)
         {
             _cartRepository = cartRepository;
             _userOrderRepository = userOrderRepository;
-            _connectionString = configuration["ConnectionStrings:SqlServerDb"];
-            _cartService = cartService;
         }
+
+
 
         public ResponseModel CreateOrder(int userId, string userAddress, string userPhoneNumber)
         {
-            IEnumerable<Cart> carts = _cartService.GetCartsByUserId(userId);
+            IEnumerable<Cart> carts = _cartRepository.GetCartsByUserId(userId);
 
             if (carts != null && carts.Any())
             {
@@ -40,7 +38,7 @@ namespace Koton.Staj.Northwind.Business.Concrete
                                 CartId = cart.CartId,
                                 UserId = userId,
                                 Quantity = cart.Quantity,
-                                ProductId = cart.ProductId,// yeni eklenen sütun
+                                ProductId = cart.ProductId,
                                 UserAddress = userAddress,
                                 UserPhoneNumber = userPhoneNumber,
                                 OrderDate = DateTime.Now
@@ -48,7 +46,7 @@ namespace Koton.Staj.Northwind.Business.Concrete
 
                             _userOrderRepository.InsertUserOrder(userOrder);
 
-                            _cartRepository.RemoveFromCart(userId, cart.ProductId);
+                            // _cartRepository.RemoveFromCart(userId, cart.ProductId);
                         }
 
                         transactionScope.Complete();
@@ -62,11 +60,12 @@ namespace Koton.Staj.Northwind.Business.Concrete
                     }
                     catch (Exception ex)
                     {
+                        transactionScope.Dispose();
                         return new ResponseModel
                         {
                             Success = false,
                             Message = Messages.ORDER_CREATES_FAILED,
-                            Data = ex.Message 
+                            Data = ex.Message
                         };
                     }
                 }
@@ -77,6 +76,62 @@ namespace Koton.Staj.Northwind.Business.Concrete
                 {
                     Success = false,
                     Message = Messages.CART_NOT_FOUND,
+                    Data = null
+                };
+            }
+        }
+
+        public List<UserOrder> GetOrdersByUserId(int userId)
+        {
+            return _userOrderRepository.GetOrdersByUserId(userId);
+        }
+        public ResponseModel CancelOrder(int orderId)
+        {
+            try
+            {
+
+                UserOrder orderToCancel = _userOrderRepository.GetOrderById(orderId);
+
+                if (orderToCancel == null)
+                {
+                    return new ResponseModel
+                    {
+                        Success = false,
+                        Message = "Sipariş bulunamadı.",
+                        Data = null
+                    };
+                }
+
+                // Siparişin iptal edilebilir olup olmadığını kontrol et
+                DateTime currentTime = DateTime.Now;
+                TimeSpan timeElapsed = currentTime - orderToCancel.OrderDate;
+
+                if (timeElapsed.TotalHours > 3)
+                {
+                    return new ResponseModel
+                    {
+                        Success = false,
+                        Message = "Sipariş 3 saatten fazla süre geçtiği için iptal edilemez.",
+                        Data = null
+                    };
+                }
+
+
+                _userOrderRepository.CancelUserOrder(orderId);
+
+                return new ResponseModel
+                {
+                    Success = true,
+                    Message = "Sipariş iptal edildi.",
+                    Data = null
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel
+                {
+                    Success = false,
+                    Message = "Sipariş iptali sırasında bir hata oluştu: " + ex.Message, // Hata durumunda uygun bir hata mesajı döndürün
                     Data = null
                 };
             }

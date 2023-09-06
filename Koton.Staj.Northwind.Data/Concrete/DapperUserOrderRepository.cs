@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using Dapper;
 using Koton.Staj.Northwind.Data.Abstract;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Koton.Staj.Northwind.Data.Concrete
 {
+
     public class DapperUserOrderRepository : IUserOrderRepository
     {
         private readonly string _connectionString;
@@ -16,16 +18,48 @@ namespace Koton.Staj.Northwind.Data.Concrete
             _connectionString = configuration["ConnectionStrings:SqlServerDb"];
         }
 
-        public void InsertUserOrder(UserOrder userOrder)
+
+
+        public List<UserOrder> GetOrdersByUserId(int userId)
         {
-            using var connection = new SqlConnection(_connectionString);
-            connection.Open();
-
-            string query = Queries.OrderQueries.INSERT_USER_ORDER_QUERY;
-
-
-            connection.Execute(query, userOrder);
+            using (IDbConnection dbConnection = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT * FROM UserOrders WHERE UserId = @UserId";
+                return dbConnection.Query<UserOrder>(query, new { UserId = userId }).ToList();
+            }
         }
-  
+
+        public void InsertUserOrder(UserOrder order)
+        {
+            using (IDbConnection dbConnection = new SqlConnection(_connectionString))
+            {
+                string insertQuery = @"
+    INSERT INTO UserOrders (CartId, UserId, Quantity, UserAddress, UserPhoneNumber, OrderDate, ProductId)
+    VALUES (@CartId, @UserId, @Quantity, @UserAddress, @UserPhoneNumber, @OrderDate, @ProductId);
+";
+
+
+                dbConnection.Execute(insertQuery, order);
+            }
+        }
+
+        public void CancelUserOrder(int orderId)
+        {
+            using (IDbConnection dbConnection = new SqlConnection(_connectionString))
+            {
+                string deleteQuery = "DELETE FROM UserOrders WHERE OrderId = @OrderId AND OrderDate >= DATEADD(HOUR, -3, GETDATE())\r\n";
+                dbConnection.Execute(deleteQuery, new { OrderId = orderId });
+            }
+        }
+
+        public UserOrder GetOrderById(int orderId)
+        {
+            using (IDbConnection dbConnection = new SqlConnection(_connectionString))
+            {
+                string query = "SELECT * FROM UserOrders WHERE OrderId = @OrderId";
+                return dbConnection.QueryFirstOrDefault<UserOrder>(query, new { OrderId = orderId });
+            }
+        }
     }
 }
+    
