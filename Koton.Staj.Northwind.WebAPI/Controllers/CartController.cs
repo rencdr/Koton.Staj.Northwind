@@ -39,7 +39,7 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
 
 
 
-        [HttpGet]
+        [HttpGet("getCartItemsByUserId")]
         public IActionResult GetCartItems([FromQuery]int userId)
         {
             try
@@ -69,7 +69,7 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
             }
         }
         
-        [HttpDelete("clearCart")]
+        [HttpDelete("clearCartByUserId")]
         public IActionResult ClearCart(int userId)
         {
             try

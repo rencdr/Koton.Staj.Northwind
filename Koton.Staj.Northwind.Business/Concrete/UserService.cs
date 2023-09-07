@@ -56,7 +56,7 @@ namespace Koton.Staj.Northwind.Business.Concrete
                 {
                     Subject = new ClaimsIdentity(new Claim[]
                     {
-                        new Claim(ClaimTypes.Name, retrievedUser.Id.ToString())
+                        new Claim(ClaimTypes.Name, retrievedUser.UserId.ToString())
                     }),
                     Expires = DateTime.UtcNow.AddHours(1),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

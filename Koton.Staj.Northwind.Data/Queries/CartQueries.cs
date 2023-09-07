@@ -8,12 +8,16 @@ namespace Koton.Staj.Northwind.Data.Queries
 {
     internal class CartQueries
     {
-        internal const string ADD_TO_CART_QUERY = @"INSERT INTO Carts (UserId, ProductId, Quantity) VALUES (@UserId, @ProductId, @Quantity)";
+        internal const string ADD_TO_CART_QUERY = @"
+            INSERT INTO Carts (UserId, ProductId, Quantity, CreatedTime, OrderedTime, DeletedTime, IsActive, IsDeleted)
+            VALUES (@UserId, @ProductId, @Quantity, GETDATE(), NULL, NULL, 1, 0)";
         internal const string GET_CART_ITEMS_QUERY = @"
     SELECT C.UserId, P.ProductId, P.ProductName, C.Quantity, P.UnitPrice,
            C.Quantity * P.UnitPrice AS TotalPrice,
            TotalCart.TotalCartAmount,
-           Cat.CategoryName, Cat.Description
+           Cat.CategoryName, Cat.Description,
+           C.IsActive,
+           C.IsDeleted
     FROM Carts AS C
     INNER JOIN Products AS P ON C.ProductId = P.ProductID
     INNER JOIN Categories AS Cat ON P.CategoryID = Cat.CategoryID
@@ -25,6 +29,7 @@ namespace Koton.Staj.Northwind.Data.Queries
     ) AS TotalCart
     WHERE C.UserId = @UserId;
 ";
+
         internal const string REMOVE_FROM_CART_QUERY = @"DELETE FROM Carts WHERE UserId = @UserId AND ProductId = @ProductId";
         internal const string DELETE_CART_QUERY = "DELETE FROM Carts WHERE UserId = @UserId";
         internal const string GET_CART_BY_USERID_QUERY = "SELECT * FROM Carts WHERE UserId = @UserId";

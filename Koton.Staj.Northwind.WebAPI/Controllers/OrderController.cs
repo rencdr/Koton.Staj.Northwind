@@ -20,8 +20,8 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
             _userOrderRepository = userOrderRepository;
         }
 
-        [HttpPost("create")]
-        public IActionResult CreateOrder([FromBody] OrderRequestModel request)
+        [HttpPost("createOrder")]
+        public IActionResult CreateOrder(OrderRequestModel request)
         {
             if (request == null)
             {
@@ -44,8 +44,8 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
             }
         }
 
-        [HttpGet("user/{userId}")]
-        public IActionResult GetOrdersByUserId(int userId)
+        [HttpGet("getOrdersByUserId")]
+        public IActionResult GetOrdersByUserId( int userId)
         {
             var orders = _userOrderRepository.GetOrdersByUserId(userId);
 
@@ -57,37 +57,9 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
             return Ok(orders); //  200 OK  döndür
         }
 
-        //[HttpDelete("cancel/{orderId}")]
-        //public IActionResult CancelOrder(int orderId)
-        //{
-        //    Console.WriteLine("Cancel isteğine yapıldı."); //
-
-        //    var order = _userOrderRepository.GetOrderById(orderId);
-
-
-
-
-        //    if (order == null)
-        //    {
-        //        return NotFound("Order not found");
-        //    }
-
-        //    var result = _orderService.CancelOrder(orderId);
-
-
-        //    try
-        //    {
-        //        _userOrderRepository.CancelUserOrder(orderId);
-
-        //        return Ok("Order canceled successfully");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest($"Failed to cancel order: {ex.Message}");
-        //    }
-        //}
-        [HttpDelete("cancel/{orderId}")]
-        public IActionResult CancelOrder(int orderId)
+ 
+        [HttpDelete("cancelOrderByOrderId")]
+        public IActionResult CancelOrder([FromQuery] int orderId)
         {
             Console.WriteLine("Cancel isteğine yapıldı."); //
 

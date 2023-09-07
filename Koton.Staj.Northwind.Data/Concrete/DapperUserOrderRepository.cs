@@ -24,7 +24,7 @@ namespace Koton.Staj.Northwind.Data.Concrete
         {
             using (IDbConnection dbConnection = new SqlConnection(_connectionString))
             {
-                string query = "SELECT * FROM UserOrders WHERE UserId = @UserId";
+                string query = Queries.OrderQueries.GET_ORDERS_BY_USER_ID_QUERY;
                 return dbConnection.Query<UserOrder>(query, new { UserId = userId }).ToList();
             }
         }
@@ -33,10 +33,7 @@ namespace Koton.Staj.Northwind.Data.Concrete
         {
             using (IDbConnection dbConnection = new SqlConnection(_connectionString))
             {
-                string insertQuery = @"
-    INSERT INTO UserOrders (CartId, UserId, Quantity, UserAddress, UserPhoneNumber, OrderDate, ProductId)
-    VALUES (@CartId, @UserId, @Quantity, @UserAddress, @UserPhoneNumber, @OrderDate, @ProductId);
-";
+                string insertQuery = Queries.OrderQueries.INSERT_USER_ORDER_QUERY;
 
 
                 dbConnection.Execute(insertQuery, order);
@@ -47,7 +44,7 @@ namespace Koton.Staj.Northwind.Data.Concrete
         {
             using (IDbConnection dbConnection = new SqlConnection(_connectionString))
             {
-                string deleteQuery = "DELETE FROM UserOrders WHERE OrderId = @OrderId ";
+                string deleteQuery = Queries.OrderQueries.CANCEL_USER_ORDER_QUERY;
                 dbConnection.Execute(deleteQuery, new { OrderId = orderId });
             }
         }
@@ -56,10 +53,12 @@ namespace Koton.Staj.Northwind.Data.Concrete
         {
             using (IDbConnection dbConnection = new SqlConnection(_connectionString))
             {
-                string query = "SELECT * FROM UserOrders WHERE OrderId = @OrderId";
+                string query = Queries.OrderQueries.GET_ORDER_BY_ID_QUERY;
                 return dbConnection.QueryFirstOrDefault<UserOrder>(query, new { OrderId = orderId });
             }
         }
+
+
     }
 }
     

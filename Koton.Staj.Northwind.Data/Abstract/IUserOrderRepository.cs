@@ -8,5 +8,7 @@ namespace Koton.Staj.Northwind.Data.Abstract
         List<UserOrder> GetOrdersByUserId(int userId);
         void CancelUserOrder(int orderId);
         UserOrder GetOrderById(int orderId);
+
+
     }
 }

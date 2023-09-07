@@ -15,6 +15,9 @@ namespace Koton.Staj.Data.Abstract
         Cart GetCartByUserId(int userId);
         IEnumerable<Cart> GetCartsByUserId(int userId);
 
+        void UpdateCart(int cartId);
+        void UpdateCartByOrderId(int orderId);
+
 
     }
 }

@@ -6,6 +6,7 @@ using Koton.Staj.Northwind.Data.Abstract;
 using System.Data.SqlClient;
 using Koton.Staj.Data.Abstract;
 using Koton.Staj.Northwind.Data.Queries;
+using System.Data;
 
 namespace Koton.Staj.Data.Concrete
 {
@@ -80,6 +81,69 @@ namespace Koton.Staj.Data.Concrete
             }
         }
 
+        public void UpdateCart(int cartId)
+        {
+            Console.WriteLine("Update Cart Girildi");
+            using (IDbConnection dbConnection = new SqlConnection(_connectionString))
+            {
+                string updateQuery = @"
+            UPDATE Carts
+            SET IsActive = 1,
+                OrderedTime = GETDATE()
+            WHERE CartId = @CartId;
+        ";
+
+                dbConnection.Execute(updateQuery, new { CartId = cartId });
+            }
+
+        }
+       
+
+        public void UpdateCartByOrderId(int orderId)
+        {
+            Console.WriteLine("UpdateCartByOrderId");
+
+            using (IDbConnection dbConnection = new SqlConnection(_connectionString))
+            {
+                // CartIds'yi sorgula
+                string cartIdsQuery = @"
+            SELECT c.CartId
+            FROM Carts c
+            INNER JOIN UserOrders uo ON c.ProductId = uo.ProductId
+            WHERE uo.OrderId = @OrderId;
+        ";
+
+                IEnumerable<int> cartIds = dbConnection.Query<int>(cartIdsQuery, new { OrderId = orderId });
+
+                if (cartIds.Any())
+                {
+                    // Carts tablosunu güncelle
+                    string updateQuery = @"
+                UPDATE Carts
+                SET IsDeleted = 1,
+                    IsActive = 0,
+                    DeletedTime = GETDATE()
+                WHERE CartId IN @CartIds;
+            ";
+
+                    int rowsAffected = dbConnection.Execute(updateQuery, new { CartIds = cartIds });
+
+                    if (rowsAffected > 0)
+                    {
+                        Console.WriteLine("Cart güncellendi");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Cart güncellenemedi veya hiçbir satır etkilenmedi.");
+                    }
+                }
+            }
+        }
+
+
 
     }
+
+
 }
+

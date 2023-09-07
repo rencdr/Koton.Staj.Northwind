@@ -47,7 +47,7 @@ namespace Koton.Staj.Northwind.Data.Queries
      ORDER BY UnitPrice ASC
 
 ";
-
+        internal const string  GET_PRODUCT_BY_ID_QUERY = $"SELECT * FROM Products WHERE ProductId = @ProductId";
 
     }
 }

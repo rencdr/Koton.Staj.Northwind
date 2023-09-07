@@ -21,6 +21,7 @@ namespace Koton.Staj.Northwind.Business.Concrete
 
 
 
+
         public ResponseModel CreateOrder(int userId, string userAddress, string userPhoneNumber)
         {
             IEnumerable<Cart> carts = _cartRepository.GetCartsByUserId(userId);
@@ -35,7 +36,6 @@ namespace Koton.Staj.Northwind.Business.Concrete
                         {
                             UserOrder userOrder = new UserOrder
                             {
-                                CartId = cart.CartId,
                                 UserId = userId,
                                 Quantity = cart.Quantity,
                                 ProductId = cart.ProductId,
@@ -44,9 +44,9 @@ namespace Koton.Staj.Northwind.Business.Concrete
                                 OrderDate = DateTime.Now
                             };
 
+                            // Siparişi UserOrders tablosuna ekle
                             _userOrderRepository.InsertUserOrder(userOrder);
-
-                            // _cartRepository.RemoveFromCart(userId, cart.ProductId);
+                            _cartRepository.UpdateCart(cart.CartId);
                         }
 
                         transactionScope.Complete();
@@ -60,6 +60,8 @@ namespace Koton.Staj.Northwind.Business.Concrete
                     }
                     catch (Exception ex)
                     {
+                        Console.WriteLine("Hata Mesajı: " + ex.Message);
+
                         transactionScope.Dispose();
                         return new ResponseModel
                         {
@@ -81,17 +83,16 @@ namespace Koton.Staj.Northwind.Business.Concrete
             }
         }
 
-        public List<UserOrder> GetOrdersByUserId(int userId)
-        {
-            return _userOrderRepository.GetOrdersByUserId(userId);
-        }
+
+
+
         public ResponseModel CancelOrder(int orderId)
         {
-            Console.WriteLine("CancelOrder metoduna girildi."); 
+            Console.WriteLine("CancelOrder metoduna girildi.");
+            Console.WriteLine("orderId: " + orderId); // orderId'yi ekrana yazdır
 
             try
             {
-                // İptal edilecek siparişi alın
                 UserOrder orderToCancel = _userOrderRepository.GetOrderById(orderId);
 
                 if (orderToCancel == null)
@@ -104,14 +105,8 @@ namespace Koton.Staj.Northwind.Business.Concrete
                     };
                 }
 
-                // Siparişin iptal edilebilir olup olmadığını kontrol et
-                // OrderDate'i UTC saat dilimine çevir
                 DateTime orderUtcTime = TimeZoneInfo.ConvertTimeToUtc(orderToCancel.OrderDate);
-
-                // Şu anki tarihi UTC saat dilimine çevir
                 DateTime currentUtcTime = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now);
-
-                // Saat farkını hesapla
                 TimeSpan timeElapsed = currentUtcTime - orderUtcTime;
 
                 if (timeElapsed.TotalHours > 3)
@@ -124,13 +119,17 @@ namespace Koton.Staj.Northwind.Business.Concrete
                     };
                 }
 
-                // Eğer sipariş iptal edilebilirse, iptal işlemini gerçekleştirin
+                // İptal işlemi başarılı olduysa, Cart güncellemesini yap
+                _cartRepository.UpdateCartByOrderId(orderId);
+                // Eğer sipariş iptal edilebilirse, iptal işlemini gerçekleştir
                 _userOrderRepository.CancelUserOrder(orderId);
+
+
 
                 return new ResponseModel
                 {
                     Success = true,
-                    Message = "Sipariş iptal edildi.",
+                    Message = "Sipariş iptal edildi ve sepet güncellendi.",
                     Data = null
                 };
             }
@@ -146,6 +145,11 @@ namespace Koton.Staj.Northwind.Business.Concrete
         }
 
 
+
+        public List<UserOrder> GetOrdersByUserId(int userId)
+        {
+            return _userOrderRepository.GetOrdersByUserId(userId);
+        }
 
 
     }

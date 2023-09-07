@@ -50,14 +50,16 @@ namespace Koton.Staj.Northwind.Business.Concrete
 
                 var displayCartDto = new DisplayCartDto
                 {
-                    UserId = cart.UserId,
-                    ProductId = cart.ProductId,
+                    
                     Quantity = cart.Quantity,
                     ProductName = product.ProductName,
                     UnitPrice = product.UnitPrice,
                     CategoryName = cart.CategoryName,  
                     Description = cart.Description,
-                    TotalCartAmount = cart.TotalCartAmount
+                    TotalCartAmount = cart.TotalCartAmount,
+                    IsActive = cart.IsActive,
+                    IsDeleted = cart.IsDeleted
+
                 };
 
                 displayCartDtos.Add(displayCartDto);
