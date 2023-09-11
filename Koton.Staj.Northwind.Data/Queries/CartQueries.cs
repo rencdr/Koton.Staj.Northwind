@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace Koton.Staj.Northwind.Data.Queries
 {
@@ -32,6 +28,25 @@ namespace Koton.Staj.Northwind.Data.Queries
 
         internal const string REMOVE_FROM_CART_QUERY = @"DELETE FROM Carts WHERE UserId = @UserId AND ProductId = @ProductId";
         internal const string DELETE_CART_QUERY = "DELETE FROM Carts WHERE UserId = @UserId";
-        internal const string GET_CART_BY_USERID_QUERY = "SELECT * FROM Carts WHERE UserId = @UserId";
+        internal const string GET_CART_BY_USERID_QUERY = "SELECT * FROM Carts WHERE UserId = @UserId AND OrderedTime IS NULL";
+        internal const string UPDATE_CART_QUERY = @"
+            UPDATE Carts
+            SET IsActive = 1,
+                OrderedTime = GETDATE()
+            WHERE CartId = @CartId;
+        ";
+        internal const string  CARTS_IDS_QUERY = @"
+            SELECT c.CartId
+            FROM Carts c
+            INNER JOIN UserOrders uo ON c.ProductId = uo.ProductId
+            WHERE uo.OrderId = @OrderId;
+        ";
+        internal const string UPDATE_QUERY= @"
+                UPDATE Carts
+                SET IsDeleted = 1,
+                    IsActive = 0,
+                    DeletedTime = GETDATE()
+                WHERE CartId IN @CartIds;
+            ";
     }
 }

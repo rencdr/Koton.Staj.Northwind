@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 using Dapper;
 using Koton.Staj.Northwind.Data.Abstract;
@@ -39,7 +38,7 @@ namespace Koton.Staj.Northwind.Data.Concrete
                 dbConnection.Execute(insertQuery, order);
             }
         }
-
+        //void değil değer döndür
         public void CancelUserOrder(int orderId)
         {
             using (IDbConnection dbConnection = new SqlConnection(_connectionString))

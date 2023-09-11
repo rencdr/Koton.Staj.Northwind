@@ -1,4 +1,6 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
+
 namespace Koton.Staj.Northwind.Entities.Dtos
 {
     public class AddToCartDto

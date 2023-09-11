@@ -19,7 +19,7 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
             _jwtSecretKey = configuration["JwtSecretKey"];
         }
 
-        [HttpPost("/api/authenticate")]
+        [HttpPost("authenticate")]
         public IActionResult Authenticate(User user)
         {
             var response = _userService.AuthenticateUser(user);
@@ -27,7 +27,7 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
 
         }
 
-        [HttpPost("/api/register")]
+        [HttpPost("register")]
         public IActionResult Register(User user)
         {
             var response = _userService.RegisterUser(user);

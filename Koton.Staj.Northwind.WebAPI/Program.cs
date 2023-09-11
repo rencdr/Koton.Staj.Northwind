@@ -1,13 +1,14 @@
+using FluentValidation;
 using Koton.Staj.Data.Abstract;
 using Koton.Staj.Data.Concrete;
 using Koton.Staj.Northwind.Business.Abstract;
 using Koton.Staj.Northwind.Business.Concrete;
+using Koton.Staj.Northwind.Business.Mapper;
+using Koton.Staj.Northwind.Business.Validation;
 using Koton.Staj.Northwind.Data.Abstract;
 using Koton.Staj.Northwind.Data.Concrete;
-using Microsoft.Extensions.Configuration;
-
-
-
+using Koton.Staj.Northwind.Entities;
+using Koton.Staj.Northwind.Entities.Dtos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ var configuration = new ConfigurationBuilder()
     .Build();
 
 var jwtSecretKey = configuration["JwtSecretKey"];
+
 
 builder.Services.AddControllers();
 builder.Services.AddTransient<IProductRepository, DapperProductRepository>();
@@ -30,9 +32,28 @@ builder.Services.AddTransient<IUserOrderRepository, DapperUserOrderRepository>()
 
 
 
+builder.Services.AddTransient<IValidator<User>, UserValidator>();
+builder.Services.AddTransient<IValidator<AddToCartDto>, AddToCartDtoValidator>();
+builder.Services.AddTransient<IValidator<OrderRequestModel>, CreateOrderValidator>();
+
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(UserValidator));
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(AddToCartDtoValidator));
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(CreateOrderValidator));
+
+
+
+
+
+
+
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddAutoMapper(typeof(CartProfile));
+builder.Services.AddAutoMapper(typeof(OrderProfile));
+builder.Services.AddAutoMapper(typeof(ProductProfile));
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -10,3 +10,4 @@ namespace Koton.Staj.Northwind.Entities
 
     }
 }
+

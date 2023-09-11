@@ -1,6 +1,10 @@
-﻿
+﻿using System.ComponentModel.DataAnnotations;
+using AutoMapper;
+using FluentValidation;
 using Koton.Staj.Data.Abstract;
 using Koton.Staj.Northwind.Business.Abstract;
+using Koton.Staj.Northwind.Business.Utilities;
+using Koton.Staj.Northwind.Business.Validation;
 using Koton.Staj.Northwind.Data.Abstract;
 using Koton.Staj.Northwind.Entities;
 using Koton.Staj.Northwind.Entities.Dtos;
@@ -12,72 +16,126 @@ namespace Koton.Staj.Northwind.Business.Concrete
     {
         private readonly ICartRepository _cartRepository;
         private readonly IProductRepository _productRepository;
-
         private readonly string _connectionString;
+        private readonly AddToCartDtoValidator _addToCartValidator;
+
+
 
         public CartService(ICartRepository cartRepository, IProductRepository productRepository, IConfiguration configuration)
         {
             _cartRepository = cartRepository;
             _productRepository = productRepository;
             _connectionString = configuration["ConnectionStrings:SqlServerDb"];
+            _addToCartValidator = new AddToCartDtoValidator(); 
+
+
+
         }
 
-        public void AddToCart(AddToCartDto cartItem)
+        public CartOperationResult AddToCart(AddToCartDto cartItem)
         {
+            var validationResult = _addToCartValidator.Validate(cartItem);
+            var result = new CartOperationResult();
+
+            if (!validationResult.IsValid)
+            {
+                result.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return result;
+            }
+
             var cart = new Cart
             {
                 UserId = cartItem.UserId,
                 ProductId = cartItem.ProductId,
                 Quantity = cartItem.Quantity
             };
+
             _cartRepository.AddToCart(cart);
+            result.Success = true;
+            result.CartId = cart.Id;
+
+            return result;
         }
 
-        public void DeleteCartByUserId(int userId)
+
+
+       
+
+
+        public ResponseModel DeleteCartByUserId(int userId)
         {
-            _cartRepository.DeleteCartByUserId(userId);
+            try
+            {
+                _cartRepository.DeleteCartByUserId(userId);
+
+                return new ResponseModel
+                {
+                    Success = true,
+                    Message = "Cart deleted successfully",
+                    Data = null
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel
+                {
+                    Success = false,
+                    Message = "An error occurred while deleting the cart: " + ex.Message,
+                    Data = null
+                };
+            }
         }
+
+      
 
         public List<DisplayCartDto> GetCartItems(int userId)
         {
             var carts = _cartRepository.GetCartItems(userId);
-            var displayCartDtos = new List<DisplayCartDto>();
 
-            foreach (var cart in carts)
+            var config = new MapperConfiguration(cfg =>
             {
-                var product = _productRepository.GetProductById(cart.ProductId);
+                cfg.CreateMap<Cart, DisplayCartDto>();
+            });
 
+            IMapper mapper = config.CreateMapper();
 
-                var displayCartDto = new DisplayCartDto
-                {
-                    
-                    Quantity = cart.Quantity,
-                    ProductName = product.ProductName,
-                    UnitPrice = product.UnitPrice,
-                    CategoryName = cart.CategoryName,  
-                    Description = cart.Description,
-                    TotalCartAmount = cart.TotalCartAmount,
-                    IsActive = cart.IsActive,
-                    IsDeleted = cart.IsDeleted
-
-                };
-
-                displayCartDtos.Add(displayCartDto);
-            }
+            var displayCartDtos = mapper.Map<List<DisplayCartDto>>(carts);
 
             return displayCartDtos;
         }
+      
 
         public IEnumerable<Cart> GetCartsByUserId(int userId)
         {
-              return _cartRepository.GetCartsByUserId(userId);
+            return _cartRepository.GetCartsByUserId(userId);
         }
 
 
 
-        public void RemoveFromCart(int userId, int productId)
+
+        public ResponseModel RemoveFromCart(int userId, int productId)
         {
-            _cartRepository.RemoveFromCart(userId, productId);
+            try
+            {
+                _cartRepository.RemoveFromCart(userId, productId);
+
+                return new ResponseModel
+                {
+                    Success = true,
+                    Message = "Product removed from cart successfully",
+                    Data = null
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseModel
+                {
+                    Success = false,
+                    Message = "An error occurred while removing the product from the cart: " + ex.Message,
+                    Data = null
+                };
+            }
         }
+
     }
 }

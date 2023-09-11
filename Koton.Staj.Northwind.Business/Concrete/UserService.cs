@@ -1,7 +1,6 @@
 ﻿
 using System.Security.Claims;
 using System.Text;
-using BCrypt;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using Koton.Staj.Northwind.Business.Abstract;
@@ -9,6 +8,8 @@ using Koton.Staj.Northwind.Business.Utilities;
 using Koton.Staj.Northwind.Data.Abstract;
 using Koton.Staj.Northwind.Entities;
 using Microsoft.Extensions.Configuration;
+using BCrypt;
+using Koton.Staj.Northwind.Business.Validation;
 
 namespace Koton.Staj.Northwind.Business.Concrete
 {
@@ -65,7 +66,7 @@ namespace Koton.Staj.Northwind.Business.Concrete
 
                 return new ResponseModel
                 {
-                    
+
                     Success = true,
                     Message = Messages.SUCCESS_MESSAGE,
                     Data = new { Token = tokenHandler.WriteToken(token) }
@@ -76,7 +77,7 @@ namespace Koton.Staj.Northwind.Business.Concrete
             {
                 return new ResponseModel
                 {
-                    
+
                     Success = false,
                     Message = Messages.INVALID_CREDENTIALS_MESSAGE,
                     Data = null
@@ -84,7 +85,7 @@ namespace Koton.Staj.Northwind.Business.Concrete
             }
         }
 
-         public ResponseModel RegisterUser(User user)
+        public ResponseModel RegisterUser(User user)
 
         {
             var existingUser = _userRepository.GetUserByUsernameAsync(user.Username).Result;
@@ -93,7 +94,7 @@ namespace Koton.Staj.Northwind.Business.Concrete
             {
                 return new ResponseModel
                 {
-                    
+
                     Success = false,
                     Message = Messages.USERNAME_ALREADY_EXISTS_MESSAGE,
                     Data = null
@@ -110,8 +111,8 @@ namespace Koton.Staj.Northwind.Business.Concrete
             var createdUser = CreateUserAsync(newUser).Result;
 
             return createdUser != null
-                ? new ResponseModel {Success = true, Message = Messages.SUCCESS_MESSAGE, Data = createdUser }
-                : new ResponseModel {Success = false, Message = Messages.USER_REGISTRATION_FAILED_MESSAGE, Data = null };
+                ? new ResponseModel { Success = true, Message = Messages.SUCCESS_MESSAGE, Data = createdUser }
+                : new ResponseModel { Success = false, Message = Messages.USER_REGISTRATION_FAILED_MESSAGE, Data = null };
         }
     }
 }

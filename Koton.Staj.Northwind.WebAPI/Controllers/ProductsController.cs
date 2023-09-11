@@ -1,5 +1,4 @@
 ﻿using Koton.Staj.Northwind.Business.Abstract;
-using Koton.Staj.Northwind.Entities;
 using Koton.Staj.Northwind.Entities.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,22 +14,21 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
         {
             _productService = productService;
         }
-
-        [HttpGet("/api/products")]
+        [HttpGet("randomList")]
         public IActionResult GetAllProducts()
         {
             IEnumerable<ProductDto> productDtos = _productService.GetAllProducts();
             return Ok(productDtos);
         }
 
-        [HttpGet("/api/products/byPriceRangeDesc")]
+        [HttpGet("/byPriceRangeDesc")]
         public IActionResult GetAllProductsOrderByDescendingPrice()
         {
             IEnumerable<ProductDto> productDtos = _productService.GetAllProductsOrderByDescendingPrice();
             return Ok(productDtos);
         }
 
-        [HttpGet("/api/products/byPriceRangeAsc")]
+        [HttpGet("byPriceRangeAsc")]
         public IActionResult GetAllProductsOrderByAsscendingPrice()
         {
             IEnumerable<ProductDto> productDtos = _productService.GetAllProductsOrderByAscendingPrice();

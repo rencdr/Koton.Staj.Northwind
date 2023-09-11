@@ -86,12 +86,7 @@ namespace Koton.Staj.Data.Concrete
             Console.WriteLine("Update Cart Girildi");
             using (IDbConnection dbConnection = new SqlConnection(_connectionString))
             {
-                string updateQuery = @"
-            UPDATE Carts
-            SET IsActive = 1,
-                OrderedTime = GETDATE()
-            WHERE CartId = @CartId;
-        ";
+                string updateQuery = CartQueries.UPDATE_CART_QUERY;
 
                 dbConnection.Execute(updateQuery, new { CartId = cartId });
             }
@@ -106,25 +101,14 @@ namespace Koton.Staj.Data.Concrete
             using (IDbConnection dbConnection = new SqlConnection(_connectionString))
             {
                 // CartIds'yi sorgula
-                string cartIdsQuery = @"
-            SELECT c.CartId
-            FROM Carts c
-            INNER JOIN UserOrders uo ON c.ProductId = uo.ProductId
-            WHERE uo.OrderId = @OrderId;
-        ";
+                string cartIdsQuery = CartQueries.CARTS_IDS_QUERY;
 
                 IEnumerable<int> cartIds = dbConnection.Query<int>(cartIdsQuery, new { OrderId = orderId });
 
                 if (cartIds.Any())
                 {
                     // Carts tablosunu güncelle
-                    string updateQuery = @"
-                UPDATE Carts
-                SET IsDeleted = 1,
-                    IsActive = 0,
-                    DeletedTime = GETDATE()
-                WHERE CartId IN @CartIds;
-            ";
+                    string updateQuery = CartQueries.UPDATE_QUERY;
 
                     int rowsAffected = dbConnection.Execute(updateQuery, new { CartIds = cartIds });
 
