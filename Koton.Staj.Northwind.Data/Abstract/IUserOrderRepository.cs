@@ -4,9 +4,13 @@ namespace Koton.Staj.Northwind.Data.Abstract
 {
     public interface IUserOrderRepository
     {
-        void InsertUserOrder(UserOrder order);
+        bool InsertUserOrder(UserOrder order);
+
+        //void InsertUserOrder(UserOrder order);
         List<UserOrder> GetOrdersByUserId(int userId);
-        void CancelUserOrder(int orderId);
+        bool CancelUserOrder(int orderId);
+
+        //void CancelUserOrder(int orderId);
         UserOrder GetOrderById(int orderId);
 
 

@@ -28,25 +28,67 @@ namespace Koton.Staj.Northwind.Data.Concrete
             }
         }
 
-        public void InsertUserOrder(UserOrder order)
+        public bool InsertUserOrder(UserOrder order)
         {
-            using (IDbConnection dbConnection = new SqlConnection(_connectionString))
+            try
             {
-                string insertQuery = Queries.OrderQueries.INSERT_USER_ORDER_QUERY;
+                using (IDbConnection dbConnection = new SqlConnection(_connectionString))
+                {
+                    string insertQuery = Queries.OrderQueries.INSERT_USER_ORDER_QUERY;
 
+                    int rowsAffected = dbConnection.Execute(insertQuery, order);
 
-                dbConnection.Execute(insertQuery, order);
+                    // Eğer en az bir satır ekleniyorsa işlem başarılı sayılır.
+                    return rowsAffected > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hata Mesajı: " + ex.Message);
+                return false;
             }
         }
+
+        //public void InsertUserOrder(UserOrder order)
+        //{
+        //    using (IDbConnection dbConnection = new SqlConnection(_connectionString))
+        //    {
+        //        string insertQuery = Queries.OrderQueries.INSERT_USER_ORDER_QUERY;
+
+
+        //        dbConnection.Execute(insertQuery, order);
+        //    }
+        //}
         //void değil değer döndür
-        public void CancelUserOrder(int orderId)
+
+        public bool CancelUserOrder(int orderId)
         {
-            using (IDbConnection dbConnection = new SqlConnection(_connectionString))
+            try
             {
-                string deleteQuery = Queries.OrderQueries.CANCEL_USER_ORDER_QUERY;
-                dbConnection.Execute(deleteQuery, new { OrderId = orderId });
+                using (IDbConnection dbConnection = new SqlConnection(_connectionString))
+                {
+                    string deleteQuery = Queries.OrderQueries.CANCEL_USER_ORDER_QUERY;
+                    int rowsAffected = dbConnection.Execute(deleteQuery, new { OrderId = orderId });
+
+                    // Eğer en az bir satır siliniyorsa işlem başarılı sayılır.
+                    return rowsAffected > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hata Mesajı: " + ex.Message);
+                return false;
             }
         }
+
+        //public void CancelUserOrder(int orderId)
+        //{
+        //    using (IDbConnection dbConnection = new SqlConnection(_connectionString))
+        //    {
+        //        string deleteQuery = Queries.OrderQueries.CANCEL_USER_ORDER_QUERY;
+        //        dbConnection.Execute(deleteQuery, new { OrderId = orderId });
+        //    }
+        //}
 
         public UserOrder GetOrderById(int orderId)
         {

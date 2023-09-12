@@ -46,8 +46,9 @@ namespace Koton.Staj.Northwind.Business.Concrete
                     Data = errors
                 };
             }
+            List<Cart> carts = _cartRepository.GetCartsByUserId(userId).ToList();
 
-            IEnumerable<Cart> carts = _cartRepository.GetCartsByUserId(userId);
+            //IEnumerable<Cart> carts = _cartRepository.GetCartsByUserId(userId);
 
             if (carts != null && carts.Any())
             {
@@ -118,7 +119,6 @@ namespace Koton.Staj.Northwind.Business.Concrete
             }
             catch (Exception ex)
             {
-                // Hata durumunda uygun bir hata mesajı dönebilirsiniz.
                 return new ResponseModel
                 {
                     Success = false,

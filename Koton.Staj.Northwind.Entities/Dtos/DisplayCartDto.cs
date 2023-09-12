@@ -14,5 +14,6 @@ namespace Koton.Staj.Northwind.Entities.Dtos
         public bool IsDeleted { get; set; }
 
 
+
     }
 }

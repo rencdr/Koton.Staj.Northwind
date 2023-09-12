@@ -12,8 +12,10 @@ namespace Koton.Staj.Northwind.Business.Abstract
 
         ResponseModel RemoveFromCart(int userId, int productId); 
         List<DisplayCartDto> GetCartItems(int userId);
-        ResponseModel DeleteCartByUserId(int userId); 
-        IEnumerable<Cart> GetCartsByUserId(int userId);
+        ResponseModel DeleteCartByUserId(int userId);
+        //IEnumerable<Cart> GetCartsByUserId(int userId);
+        List<Cart> GetCartsByUserId(int userId);
+
 
 
     }

@@ -6,17 +6,29 @@ namespace Koton.Staj.Data.Abstract
 {
     public interface ICartRepository
     {
-        void AddToCart(Cart cartItem);
-        void RemoveFromCart(int userId, int productId);
+        bool AddToCart(Cart cartItem);
+
+        //void AddToCart(Cart cartItem);
+        bool RemoveFromCart(int userId, int productId);
+
+        //void RemoveFromCart(int userId, int productId);
         List<Cart> GetCartItems(int userId);
 
-        void DeleteCartByUserId(int userId);
+        bool DeleteCartByUserId(int userId);
+
+        //void DeleteCartByUserId(int userId);
 
         Cart GetCartByUserId(int userId);
-        IEnumerable<Cart> GetCartsByUserId(int userId);
+        //IEnumerable<Cart> GetCartsByUserId(int userId);
+        List<Cart> GetCartsByUserId(int userId);
 
-        void UpdateCart(int cartId);
-        void UpdateCartByOrderId(int orderId);
+        bool UpdateCart(int cartId);
+
+        //void UpdateCart(int cartId);
+
+        bool UpdateCartByOrderId(int orderId);
+
+        //void UpdateCartByOrderId(int orderId);
 
 
     }

@@ -18,15 +18,17 @@ namespace Koton.Staj.Northwind.Business.Concrete
         private readonly IProductRepository _productRepository;
         private readonly string _connectionString;
         private readonly AddToCartDtoValidator _addToCartValidator;
+        private readonly IMapper _mapper;
 
 
 
-        public CartService(ICartRepository cartRepository, IProductRepository productRepository, IConfiguration configuration)
+        public CartService(ICartRepository cartRepository, IProductRepository productRepository, IConfiguration configuration, IMapper mapper)
         {
             _cartRepository = cartRepository;
             _productRepository = productRepository;
             _connectionString = configuration["ConnectionStrings:SqlServerDb"];
-            _addToCartValidator = new AddToCartDtoValidator(); 
+            _addToCartValidator = new AddToCartDtoValidator();
+            _mapper = mapper;
 
 
 
@@ -58,10 +60,6 @@ namespace Koton.Staj.Northwind.Business.Concrete
         }
 
 
-
-       
-
-
         public ResponseModel DeleteCartByUserId(int userId)
         {
             try
@@ -85,9 +83,14 @@ namespace Koton.Staj.Northwind.Business.Concrete
                 };
             }
         }
+        //public List<DisplayCartDto> GetCartItems(int userId)
+        //{
+        //    var carts = _cartRepository.GetCartItems(userId);
+        //    var displayCartDtos = _mapper.Map<List<DisplayCartDto>>(carts);
+        //    return displayCartDtos;
+        //}
 
-      
-
+        //DI da tanımla ama categories tablosundan bilgi alamıyosun unutma!!
         public List<DisplayCartDto> GetCartItems(int userId)
         {
             var carts = _cartRepository.GetCartItems(userId);
@@ -103,11 +106,16 @@ namespace Koton.Staj.Northwind.Business.Concrete
 
             return displayCartDtos;
         }
-      
 
-        public IEnumerable<Cart> GetCartsByUserId(int userId)
+
+        //public IEnumerable<Cart> GetCartsByUserId(int userId)
+        //{
+        //    return _cartRepository.GetCartsByUserId(userId);
+        //}
+        public List<Cart> GetCartsByUserId(int userId)
         {
-            return _cartRepository.GetCartsByUserId(userId);
+            IEnumerable<Cart> carts = _cartRepository.GetCartsByUserId(userId);
+            return carts.ToList();
         }
 
 
