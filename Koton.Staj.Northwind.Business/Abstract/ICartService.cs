@@ -8,24 +8,19 @@ namespace Koton.Staj.Northwind.Business.Abstract
 {
     public interface ICartService
     {
-        CartOperationResult AddToCart(AddToCartDto cartItem);
+        ResponseModel<List<string>> AddToCart(AddToCartDto cartItem);
 
-        ResponseModel RemoveFromCart(int userId, int productId); 
-        List<DisplayCartDto> GetCartItems(int userId);
-        ResponseModel DeleteCartByUserId(int userId);
-        //IEnumerable<Cart> GetCartsByUserId(int userId);
-        List<Cart> GetCartsByUserId(int userId);
+        ResponseModel<bool> RemoveFromCart(int userId, int productId);
 
+        ResponseModel<List<DisplayCartDto>> GetCartItems(int userId);
 
+        ResponseModel<bool> DeleteCartByUserId(int userId);
 
-    }
+        ResponseModel<List<Cart>> GetCartsByUserId(int userId);
 
-    public class CartOperationResult
-    {
-        public int CartId { get; set; }
-        public List<string> Errors { get; set; }
-        public bool Success { get; set; }
 
     }
+
+
 
 }

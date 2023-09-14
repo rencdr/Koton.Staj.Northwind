@@ -20,20 +20,21 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
         }
 
         [HttpPost("authenticate")]
-        public IActionResult Authenticate(User user)
+        public IActionResult Authenticate([FromBody] User user)
         {
             var response = _userService.AuthenticateUser(user);
-            return Ok(response); 
-
+            return response.Success ? Ok(response) : BadRequest(response);
         }
+
 
         [HttpPost("register")]
-        public IActionResult Register(User user)
+        public async Task<IActionResult> Register([FromBody] User user)
         {
-            var response = _userService.RegisterUser(user);
-            return Ok(response);
+            var response = await _userService.RegisterUser(user);
 
+            return response.Success ? Ok(response) : BadRequest(response);
         }
+
 
 
     }

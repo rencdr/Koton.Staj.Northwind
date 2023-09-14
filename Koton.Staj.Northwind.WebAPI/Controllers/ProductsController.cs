@@ -14,26 +14,36 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
         {
             _productService = productService;
         }
+
         [HttpGet("randomList")]
         public IActionResult GetAllProducts()
         {
-            IEnumerable<ProductDto> productDtos = _productService.GetAllProducts();
-            return Ok(productDtos);
+            var response = _productService.GetAllProducts();
+
+            return response.Success ? Ok(response) : BadRequest(response);
         }
 
-        [HttpGet("/byPriceRangeDesc")]
+
+
+        [HttpGet("byPriceRangeDesc")]
         public IActionResult GetAllProductsOrderByDescendingPrice()
         {
-            IEnumerable<ProductDto> productDtos = _productService.GetAllProductsOrderByDescendingPrice();
-            return Ok(productDtos);
+            var response = _productService.GetAllProductsOrderByDescendingPrice();
+
+            return response.Success ? Ok(response) : BadRequest(response);
         }
+
+
 
         [HttpGet("byPriceRangeAsc")]
         public IActionResult GetAllProductsOrderByAsscendingPrice()
         {
-            IEnumerable<ProductDto> productDtos = _productService.GetAllProductsOrderByAscendingPrice();
-            return Ok(productDtos);
+            var response = _productService.GetAllProductsOrderByAscendingPrice();
+
+            return response.Success ? Ok(response) : BadRequest(response);
         }
-        
+
+
+
     }
 }

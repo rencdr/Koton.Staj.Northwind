@@ -30,19 +30,22 @@ namespace Koton.Staj.Northwind.Business.Concrete
             _addToCartValidator = new AddToCartDtoValidator();
             _mapper = mapper;
 
-
-
         }
 
-        public CartOperationResult AddToCart(AddToCartDto cartItem)
+
+        public ResponseModel<List<string>> AddToCart(AddToCartDto cartItem)
         {
             var validationResult = _addToCartValidator.Validate(cartItem);
-            var result = new CartOperationResult();
 
             if (!validationResult.IsValid)
             {
-                result.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                return result;
+                var errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                return new ResponseModel<List<string>>
+                {
+                    Success = false,
+                    Message = "Geçersiz girişler bulundu.",
+                    Data = errors
+                };
             }
 
             var cart = new Cart
@@ -53,97 +56,211 @@ namespace Koton.Staj.Northwind.Business.Concrete
             };
 
             _cartRepository.AddToCart(cart);
-            result.Success = true;
-            result.CartId = cart.Id;
 
-            return result;
+            return new ResponseModel<List<string>>
+            {
+                Success = true,
+                Message = "Ürün başarıyla sepete eklendi.",
+                Data = null
+            };
         }
 
 
-        public ResponseModel DeleteCartByUserId(int userId)
+        //public List<string> AddToCart(AddToCartDto cartItem)
+        //{
+        //    var validationResult = _addToCartValidator.Validate(cartItem);
+        //    var errors = new List<string>();
+
+        //    if (!validationResult.IsValid)
+        //    {
+        //        errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+        //        return errors;
+        //    }
+
+        //    var cart = new Cart
+        //    {
+        //        UserId = cartItem.UserId,
+        //        ProductId = cartItem.ProductId,
+        //        Quantity = cartItem.Quantity
+        //    };
+
+        //    _cartRepository.AddToCart(cart);
+
+        //    return errors; 
+        //}
+
+
+        public ResponseModel<bool> DeleteCartByUserId(int userId)
         {
             try
             {
                 _cartRepository.DeleteCartByUserId(userId);
-
-                return new ResponseModel
+                return new ResponseModel<bool>
                 {
                     Success = true,
-                    Message = "Cart deleted successfully",
-                    Data = null
+                    Message = "Sepet başarıyla silindi.",
+                    Data = true
                 };
             }
             catch (Exception ex)
             {
-                return new ResponseModel
+                Console.WriteLine("Hata Mesajı: " + ex.Message);
+                return new ResponseModel<bool>
                 {
                     Success = false,
-                    Message = "An error occurred while deleting the cart: " + ex.Message,
-                    Data = null
+                    Message = "Sepet silinirken bir hata oluştu.",
+                    Data = false
                 };
             }
         }
+
+
+        //public bool DeleteCartByUserId(int userId)
+        //{
+        //    try
+        //    {
+        //        _cartRepository.DeleteCartByUserId(userId);
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine("Hata Mesajı: " + ex.Message);
+        //        return false; 
+        //    }
+        //}
+
+
         //public List<DisplayCartDto> GetCartItems(int userId)
         //{
         //    var carts = _cartRepository.GetCartItems(userId);
         //    var displayCartDtos = _mapper.Map<List<DisplayCartDto>>(carts);
         //    return displayCartDtos;
-        //}
-
-        //DI da tanımla ama categories tablosundan bilgi alamıyosun unutma!!
-        public List<DisplayCartDto> GetCartItems(int userId)
-        {
-            var carts = _cartRepository.GetCartItems(userId);
-
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<Cart, DisplayCartDto>();
-            });
-
-            IMapper mapper = config.CreateMapper();
-
-            var displayCartDtos = mapper.Map<List<DisplayCartDto>>(carts);
-
-            return displayCartDtos;
-        }
-
-
-        //public IEnumerable<Cart> GetCartsByUserId(int userId)
-        //{
-        //    return _cartRepository.GetCartsByUserId(userId);
-        //}
-        public List<Cart> GetCartsByUserId(int userId)
-        {
-            IEnumerable<Cart> carts = _cartRepository.GetCartsByUserId(userId);
-            return carts.ToList();
-        }
 
 
 
 
-        public ResponseModel RemoveFromCart(int userId, int productId)
+        public ResponseModel<List<DisplayCartDto>> GetCartItems(int userId)
         {
             try
             {
-                _cartRepository.RemoveFromCart(userId, productId);
+                var carts = _cartRepository.GetCartItems(userId);
 
-                return new ResponseModel
+                var config = new MapperConfiguration(cfg =>
+                {
+                    cfg.CreateMap<Cart, DisplayCartDto>();
+                });
+
+                IMapper mapper = config.CreateMapper();
+
+                var displayCartDtos = mapper.Map<List<DisplayCartDto>>(carts);
+
+                return new ResponseModel<List<DisplayCartDto>>
                 {
                     Success = true,
-                    Message = "Product removed from cart successfully",
-                    Data = null
+                    Message = "Sepet öğeleri başarıyla alındı.",
+                    Data = displayCartDtos
                 };
             }
             catch (Exception ex)
             {
-                return new ResponseModel
+                Console.WriteLine("Hata Mesajı: " + ex.Message);
+                return new ResponseModel<List<DisplayCartDto>>
                 {
                     Success = false,
-                    Message = "An error occurred while removing the product from the cart: " + ex.Message,
+                    Message = "Sepet öğeleri alınırken bir hata oluştu.",
                     Data = null
                 };
             }
         }
+
+
+        //DI da tanımla ama categories tablosundan bilgi alamıyosun unutma!!
+        //public List<DisplayCartDto> GetCartItems(int userId)
+        //{
+        //    var carts = _cartRepository.GetCartItems(userId);
+
+        //    var config = new MapperConfiguration(cfg =>
+        //    {
+        //        cfg.CreateMap<Cart, DisplayCartDto>();
+        //    });
+
+        //    IMapper mapper = config.CreateMapper();
+
+        //    var displayCartDtos = mapper.Map<List<DisplayCartDto>>(carts);
+
+        //    return displayCartDtos;
+        //}
+
+
+        public ResponseModel<List<Cart>> GetCartsByUserId(int userId)
+        {
+            try
+            {
+                IEnumerable<Cart> carts = _cartRepository.GetCartsByUserId(userId);
+                return new ResponseModel<List<Cart>>
+                {
+                    Success = true,
+                    Message = "Sepetler başarıyla alındı.",
+                    Data = carts.ToList()
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hata Mesajı: " + ex.Message);
+                return new ResponseModel<List<Cart>>
+                {
+                    Success = false,
+                    Message = "Sepetler alınırken bir hata oluştu.",
+                    Data = null
+                };
+            }
+        }
+
+        //public List<Cart> GetCartsByUserId(int userId)
+        //{
+        //    IEnumerable<Cart> carts = _cartRepository.GetCartsByUserId(userId);
+        //    return carts.ToList();
+        //}
+
+
+        public ResponseModel<bool> RemoveFromCart(int userId, int productId)
+        {
+            try
+            {
+                _cartRepository.RemoveFromCart(userId, productId);
+                return new ResponseModel<bool>
+                {
+                    Success = true,
+                    Message = "Ürün sepetten başarıyla kaldırıldı.",
+                    Data = true
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hata Mesajı: " + ex.Message);
+                return new ResponseModel<bool>
+                {
+                    Success = false,
+                    Message = "Ürün sepetten kaldırılırken bir hata oluştu.",
+                    Data = false
+                };
+            }
+        }
+
+        //public bool RemoveFromCart(int userId, int productId)
+        //{
+        //    try
+        //    {
+        //        _cartRepository.RemoveFromCart(userId, productId);
+        //        return true; 
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine("Hata Mesajı: " + ex.Message);
+        //        return false; 
+        //    }
+        //}
+
 
     }
 }

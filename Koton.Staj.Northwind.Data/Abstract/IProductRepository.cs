@@ -6,11 +6,6 @@ namespace Koton.Staj.Northwind.Data.Abstract
 {
     public interface IProductRepository
     {
-        //IEnumerable<Product> GetAllProducts();
-
-        //IEnumerable<Product> GetAllProductsOrderByDescendingPrice();
-
-        //IEnumerable<Product> GetAllProductsOrderByAscendingPrice();
 
         List<Product> GetAllProducts();
         List<Product> GetAllProductsOrderByDescendingPrice();

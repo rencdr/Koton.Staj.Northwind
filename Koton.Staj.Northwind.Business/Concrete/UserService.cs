@@ -27,6 +27,90 @@ namespace Koton.Staj.Northwind.Business.Concrete
             _jwtSecretKey = configuration["JwtSecretKey"];
         }
 
+        
+
+
+        public ResponseModel<string> AuthenticateUser(User user)
+        {
+            var retrievedUser = _userRepository.GetUserByUsernameAsync(user.Username).Result;
+
+            if (retrievedUser != null && BCrypt.Net.BCrypt.Verify(user.Password, retrievedUser.Password))
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(_jwtSecretKey);
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(new Claim[]
+                    {
+                new Claim(ClaimTypes.Name, retrievedUser.UserId.ToString())
+                    }),
+                    Expires = DateTime.UtcNow.AddHours(1),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+
+                return new ResponseModel<string>
+                {
+                    Success = true,
+                    Message = Messages.SUCCESS_MESSAGE,
+                    Data = tokenHandler.WriteToken(token)
+                };
+            }
+            else
+            {
+                return new ResponseModel<string>
+                {
+                    Success = false,
+                    Message = Messages.INVALID_CREDENTIALS_MESSAGE,
+                    Data = null
+                };
+            }
+        }
+
+        public async Task<ResponseModel<int>> RegisterUser(User user)
+        {
+            var existingUser = _userRepository.GetUserByUsernameAsync(user.Username).Result;
+
+            if (existingUser != null)
+            {
+                return new ResponseModel<int>
+                {
+                    Success = false,
+                    Message = Messages.USERNAME_ALREADY_EXISTS_MESSAGE,
+                    Data = -1 // Hata 
+                };
+            }
+
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            var newUser = new User
+            {
+                Username = user.Username,
+                Password = hashedPassword
+            };
+
+            var createdUser = await CreateUserAsync(newUser);
+
+            if (createdUser != null)
+            {
+                return new ResponseModel<int>
+                {
+                    Success = true,
+                    Message = Messages.SUCCESS_MESSAGE,
+                    Data = 1 //Başarılı
+                };
+            }
+            else
+            {
+                return new ResponseModel<int>
+                {
+                    Success = false,
+                    Message = Messages.USER_REGISTRATION_FAILED_MESSAGE,
+                    Data = -2 // Hata
+                };
+            }
+        }
+    
+
         public async Task<User> CreateUserAsync(User user)
         {
             try
@@ -45,75 +129,9 @@ namespace Koton.Staj.Northwind.Business.Concrete
             return await _userRepository.GetUserByUsernameAsync(username);
         }
 
-        public ResponseModel AuthenticateUser(User user)
-        {
-            var retrievedUser = _userRepository.GetUserByUsernameAsync(user.Username).Result;
 
-            if (retrievedUser != null && BCrypt.Net.BCrypt.Verify(user.Password, retrievedUser.Password))
-            {
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes(_jwtSecretKey);
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
-                        new Claim(ClaimTypes.Name, retrievedUser.UserId.ToString())
-                    }),
-                    Expires = DateTime.UtcNow.AddHours(1),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                };
-                var token = tokenHandler.CreateToken(tokenDescriptor);
 
-                return new ResponseModel
-                {
 
-                    Success = true,
-                    Message = Messages.SUCCESS_MESSAGE,
-                    Data = new { Token = tokenHandler.WriteToken(token) }
-                };
-
-            }
-            else
-            {
-                return new ResponseModel
-                {
-
-                    Success = false,
-                    Message = Messages.INVALID_CREDENTIALS_MESSAGE,
-                    Data = null
-                };
-            }
-        }
-
-        public ResponseModel RegisterUser(User user)
-
-        {
-            var existingUser = _userRepository.GetUserByUsernameAsync(user.Username).Result;
-
-            if (existingUser != null)
-            {
-                return new ResponseModel
-                {
-
-                    Success = false,
-                    Message = Messages.USERNAME_ALREADY_EXISTS_MESSAGE,
-                    Data = null
-                };
-            }
-
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
-            var newUser = new User
-            {
-                Username = user.Username,
-                Password = hashedPassword
-            };
-
-            var createdUser = CreateUserAsync(newUser).Result;
-
-            return createdUser != null
-                ? new ResponseModel { Success = true, Message = Messages.SUCCESS_MESSAGE, Data = createdUser }
-                : new ResponseModel { Success = false, Message = Messages.USER_REGISTRATION_FAILED_MESSAGE, Data = null };
-        }
     }
 }
 

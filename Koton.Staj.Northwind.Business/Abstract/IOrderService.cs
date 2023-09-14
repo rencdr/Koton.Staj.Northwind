@@ -5,14 +5,19 @@ namespace Koton.Staj.Northwind.Business.Abstract
 {
     public interface IOrderService
     {
-        ResponseModel CreateOrder(int userId, string userAddress, string userPhoneNumber);
+        ResponseModel<int> CreateOrder(int userId, string userAddress, string userPhoneNumber);
 
-        List<UserOrder> GetOrdersByUserId(int userId);
-        ResponseModel CancelOrder(int orderId);
-        
-        ResponseModel InsertUserOrder(UserOrder userOrder); 
-        ResponseModel UpdateCart(int cartId); 
-        ResponseModel UpdateCartByOrderId(UserOrder order); 
-        ResponseModel CancelUserOrder(UserOrder order);
+        ResponseModel<List<UserOrder>> GetOrdersByUserId(int userId);
+
+        ResponseModel<int> CancelOrder(int orderId);
+
+        ResponseModel<bool> InsertUserOrder(UserOrder userOrder);
+
+        ResponseModel<bool> UpdateCart(int cartId);
+
+        ResponseModel<bool> UpdateCartByOrderId(UserOrder order);
+
+        ResponseModel<bool> CancelUserOrder(UserOrder order);
+
     }
 }

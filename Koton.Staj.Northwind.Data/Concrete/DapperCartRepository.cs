@@ -39,15 +39,7 @@ namespace Koton.Staj.Data.Concrete
             }
         }
 
-        //public void AddToCart(Cart cartItem)
-        //{
-        //    using (var connection = new SqlConnection(_connectionString))
-        //    {
-        //        var query = CartQueries.ADD_TO_CART_QUERY;
-        //        connection.Execute(query, cartItem);
 
-        //    }
-        //}
         public List<Cart> GetCartItems(int userId)
         {
             using (var connection = new SqlConnection(_connectionString))
@@ -78,14 +70,6 @@ namespace Koton.Staj.Data.Concrete
             }
         }
 
-        //public void RemoveFromCart(int userId, int productId)
-        //{
-        //    using (var connection = new SqlConnection(_connectionString))
-        //    {
-        //        var query = CartQueries.REMOVE_FROM_CART_QUERY;
-        //        connection.Execute(query, new { UserId = userId, ProductId = productId });
-        //    }
-        //}
 
 
         public bool DeleteCartByUserId(int userId)
@@ -106,14 +90,6 @@ namespace Koton.Staj.Data.Concrete
             }
         }
 
-        //public void DeleteCartByUserId(int userId)
-        //{
-        //    using (var connection = new SqlConnection(_connectionString))
-        //    {
-        //        var query = CartQueries.DELETE_CART_QUERY;
-        //        connection.Execute(query, new { UserId = userId });
-        //    }
-        //}
 
 
         public Cart GetCartByUserId(int userId)
@@ -135,14 +111,6 @@ namespace Koton.Staj.Data.Concrete
             }
         }
 
-        //public IEnumerable<Cart> GetCartsByUserId(int userId)
-        //{
-        //    using (var connection = new SqlConnection(_connectionString))
-        //    {
-        //        var query = CartQueries.GET_CART_BY_USERID_QUERY;
-        //        return connection.Query<Cart>(query, new { UserId = userId });
-        //    }
-        //}
 
 
         public bool UpdateCart(int cartId)
@@ -154,7 +122,6 @@ namespace Koton.Staj.Data.Concrete
                     string updateQuery = CartQueries.UPDATE_CART_QUERY;
                     int rowsAffected = dbConnection.Execute(updateQuery, new { CartId = cartId });
 
-                    // Eğer en az bir satır güncellendiyse işlem başarılı sayılır.
                     return rowsAffected > 0;
                 }
             }
@@ -165,17 +132,6 @@ namespace Koton.Staj.Data.Concrete
             }
         }
 
-        //public void UpdateCart(int cartId)
-        //{
-        //    Console.WriteLine("Update Cart Girildi");
-        //    using (IDbConnection dbConnection = new SqlConnection(_connectionString))
-        //    {
-        //        string updateQuery = CartQueries.UPDATE_CART_QUERY;
-
-        //        dbConnection.Execute(updateQuery, new { CartId = cartId });
-        //    }
-
-        //}
 
 
         public bool UpdateCartByOrderId(int orderId)
@@ -186,14 +142,12 @@ namespace Koton.Staj.Data.Concrete
 
                 using (IDbConnection dbConnection = new SqlConnection(_connectionString))
                 {
-                    // CartIds'yi sorgula
                     string cartIdsQuery = CartQueries.CARTS_IDS_QUERY;
 
                     IEnumerable<int> cartIds = dbConnection.Query<int>(cartIdsQuery, new { OrderId = orderId });
 
                     if (cartIds.Any())
                     {
-                        // Carts tablosunu güncelle
                         string updateQuery = CartQueries.UPDATE_QUERY;
 
                         int rowsAffected = dbConnection.Execute(updateQuery, new { CartIds = cartIds });
@@ -223,36 +177,6 @@ namespace Koton.Staj.Data.Concrete
             }
         }
 
-
-        //public void UpdateCartByOrderId(int orderId)
-        //{
-        //    Console.WriteLine("UpdateCartByOrderId");
-
-        //    using (IDbConnection dbConnection = new SqlConnection(_connectionString))
-        //    {
-        //        // CartIds'yi sorgula
-        //        string cartIdsQuery = CartQueries.CARTS_IDS_QUERY;
-
-        //        IEnumerable<int> cartIds = dbConnection.Query<int>(cartIdsQuery, new { OrderId = orderId });
-
-        //        if (cartIds.Any())
-        //        {
-        //            // Carts tablosunu güncelle
-        //            string updateQuery = CartQueries.UPDATE_QUERY;
-
-        //            int rowsAffected = dbConnection.Execute(updateQuery, new { CartIds = cartIds });
-
-        //            if (rowsAffected > 0)
-        //            {
-        //                Console.WriteLine("Cart güncellendi");
-        //            }
-        //            else
-        //            {
-        //                Console.WriteLine("Cart güncellenemedi veya hiçbir satır etkilenmedi.");
-        //            }
-        //        }
-        //    }
-        //}
 
 
 

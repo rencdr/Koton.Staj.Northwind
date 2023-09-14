@@ -7,12 +7,12 @@ namespace Koton.Staj.Northwind.Business.Abstract
     public interface IUserService
     {
         Task<User> CreateUserAsync(User user);
+
         Task<User> GetUserByUsernameAsync(string username);
-        ResponseModel AuthenticateUser(User user);
-        ResponseModel RegisterUser(User user);
 
+        ResponseModel<string> AuthenticateUser(User user);
 
-
+        Task<ResponseModel<int>> RegisterUser(User user);
 
 
     }

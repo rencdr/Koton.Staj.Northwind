@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Koton.Staj.Northwind.Entities;
 using Koton.Staj.Northwind.Data.Abstract;
 using Koton.Staj.Northwind.Business.Utilities;
+using Koton.Staj.Northwind.Business.Concrete;
 
 namespace Koton.Staj.Northwind.WebAPI.Controllers
 {
@@ -19,64 +20,33 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
             _userOrderRepository = userOrderRepository;
         }
 
+
         [HttpPost("createOrder")]
         public IActionResult CreateOrder([FromBody] OrderRequestModel request)
         {
             var result = _orderService.CreateOrder(request.UserId, request.UserAddress, request.UserPhoneNumber);
-
-            if (result.Success)
-            {
-                return Ok(new { Message = result.Message });
-            }
-            else
-            {
-                return BadRequest(new { Message = result.Message, Errors = result.Data });
-            }
+            return result.Success ? Ok(result) : BadRequest(result);
         }
-
 
 
         [HttpGet("getOrdersByUserId")]
         public IActionResult GetOrdersByUserId(int userId)
         {
-            var orders = _userOrderRepository.GetOrdersByUserId(userId);
+            var result = _orderService.GetOrdersByUserId(userId);
 
-            var response = new ResponseModel { Success = orders != null };
-
-            if (orders != null)
-            {
-                response.Data = orders.ToList();
-            }
-
-            return Ok(response);
+            return result.Success ? Ok(result) : BadRequest(result);
         }
-
-
-
-
 
 
         [HttpDelete("cancelOrderByOrderId")]
-
         public IActionResult CancelOrder([FromQuery] int orderId)
         {
-            var order = _userOrderRepository.GetOrderById(orderId);
-
-            if (order == null)
-            {
-                return NotFound("Order not found");
-            }
-
             var result = _orderService.CancelOrder(orderId);
 
-            var response = new ResponseModel
-            {
-                Success = result.Success,
-                Message = result.Message
-            };
+            return result.Success ? Ok(result) : BadRequest(result);
 
-            return Ok(response);
         }
+
 
 
 

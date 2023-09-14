@@ -16,7 +16,7 @@ namespace Koton.Staj.Northwind.Entities
         public string UserPhoneNumber { get; set; }
         public DateTime OrderDate { get; set; }
 
-        public int CartId { get; set; } 
+        public int CartId { get; set; }
 
 
     }

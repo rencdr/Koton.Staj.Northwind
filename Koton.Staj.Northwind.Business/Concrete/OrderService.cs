@@ -6,6 +6,7 @@ using Koton.Staj.Data.Abstract;
 using Koton.Staj.Northwind.Business.Abstract;
 using AutoMapper;
 using Koton.Staj.Northwind.Business.Validation;
+using System.Data.SqlClient;
 
 namespace Koton.Staj.Northwind.Business.Concrete
 {
@@ -23,8 +24,11 @@ namespace Koton.Staj.Northwind.Business.Concrete
 
         }
 
-       
-        public ResponseModel CreateOrder(int userId, string userAddress, string userPhoneNumber)
+
+
+
+        //async yap
+        public ResponseModel<int> CreateOrder(int userId, string userAddress, string userPhoneNumber)
         {
             var validator = new CreateOrderValidator();
             var orderRequest = new OrderRequestModel
@@ -39,16 +43,14 @@ namespace Koton.Staj.Northwind.Business.Concrete
             if (!validationResult.IsValid)
             {
                 var errors = validationResult.Errors.Select(error => error.ErrorMessage).ToList();
-                return new ResponseModel
+                return new ResponseModel<int>
                 {
                     Success = false,
                     Message = "Validation failed",
-                    Data = errors
+                    Data = default(int)
                 };
             }
             List<Cart> carts = _cartRepository.GetCartsByUserId(userId).ToList();
-
-            //IEnumerable<Cart> carts = _cartRepository.GetCartsByUserId(userId);
 
             if (carts != null && carts.Any())
             {
@@ -67,13 +69,15 @@ namespace Koton.Staj.Northwind.Business.Concrete
                             InsertUserOrder(userOrder);
                         }
 
+                        int orderId = _userOrderRepository.GetLastInsertedOrderId(userId);
+
                         transactionScope.Complete();
 
-                        return new ResponseModel
+                        return new ResponseModel<int>
                         {
                             Success = true,
                             Message = Messages.ORDER_CREATED_SUCCESS,
-                            Data = null
+                            Data = orderId
                         };
                     }
                     catch (Exception ex)
@@ -81,22 +85,22 @@ namespace Koton.Staj.Northwind.Business.Concrete
                         Console.WriteLine("Hata Mesajı: " + ex.Message);
 
                         transactionScope.Dispose();
-                        return new ResponseModel
+                        return new ResponseModel<int>
                         {
                             Success = false,
                             Message = Messages.ORDER_CREATES_FAILED,
-                            Data = ex.Message
+                            Data = 0
                         };
                     }
                 }
             }
             else
             {
-                return new ResponseModel
+                return new ResponseModel<int>
                 {
                     Success = false,
                     Message = Messages.CART_NOT_FOUND,
-                    Data = null
+                    Data = 0
                 };
             }
         }
@@ -104,178 +108,196 @@ namespace Koton.Staj.Northwind.Business.Concrete
 
 
 
-        public ResponseModel InsertUserOrder(UserOrder userOrder)
+        public ResponseModel<bool> InsertUserOrder(UserOrder userOrder)
         {
             try
             {
                 _userOrderRepository.InsertUserOrder(userOrder);
-
-                return new ResponseModel
+                return new ResponseModel<bool>
                 {
                     Success = true,
-                    Message = "User order inserted successfully",
-                    Data = null
+                    Message = "Sipariş başarıyla eklendi.",
+                    Data = true
                 };
             }
             catch (Exception ex)
             {
-                return new ResponseModel
+                Console.WriteLine("Hata Mesajı: " + ex.Message);
+                return new ResponseModel<bool>
                 {
                     Success = false,
-                    Message = "An error occurred while inserting the user order: " + ex.Message,
-                    Data = null
+                    Message = "Sipariş eklenirken bir hata oluştu.",
+                    Data = false
                 };
             }
         }
 
-       
 
-        public ResponseModel UpdateCart(int cartId)
+
+
+        public ResponseModel<bool> UpdateCart(int cartId)
         {
             try
             {
                 _cartRepository.UpdateCart(cartId);
-
-                return new ResponseModel
+                return new ResponseModel<bool>
                 {
                     Success = true,
-                    Message = "Cart updated successfully",
-                    Data = null
+                    Message = "Sepet güncellendi.",
+                    Data = true
                 };
             }
             catch (Exception ex)
             {
-                return new ResponseModel
+                Console.WriteLine("Hata Mesajı: " + ex.Message);
+                return new ResponseModel<bool>
                 {
                     Success = false,
-                    Message = "An error occurred while updating the cart: " + ex.Message,
+                    Message = "Sepet güncellenirken bir hata oluştu.",
+                    Data = false
+                };
+            }
+        }
+
+
+
+        public ResponseModel<List<UserOrder>> GetOrdersByUserId(int userId)
+        {
+            try
+            {
+                List<UserOrder> orders = _userOrderRepository.GetOrdersByUserId(userId);
+                return new ResponseModel<List<UserOrder>>
+                {
+                    Success = true,
+                    Message = "Siparişler başarıyla alındı.",
+                    Data = orders
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hata Mesajı: " + ex.Message);
+                return new ResponseModel<List<UserOrder>>
+                {
+                    Success = false,
+                    Message = "Siparişler alınırken bir hata oluştu.",
                     Data = null
                 };
             }
         }
 
-       
 
-
-
-        public ResponseModel CancelOrder(int orderId)
+        public ResponseModel<int> CancelOrder(int orderId)
         {
             Console.WriteLine("CancelOrder metoduna girildi.");
             Console.WriteLine("orderId: " + orderId);
 
+            UserOrder orderToCancel = _userOrderRepository.GetOrderById(orderId);
+
+            if (orderToCancel == null)
+            {
+                return new ResponseModel<int>
+                {
+                    Success = false,
+                    Message = "Sipariş bulunamadı.",
+                    Data = -1 // Hata 
+                };
+            }
+
+            DateTime orderUtcTime = TimeZoneInfo.ConvertTimeToUtc(orderToCancel.OrderDate);
+            DateTime currentUtcTime = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now);
+            TimeSpan timeElapsed = currentUtcTime - orderUtcTime;
+
+            if (timeElapsed.TotalHours > 3)
+            {
+                return new ResponseModel<int>
+                {
+                    Success = false,
+                    Message = "Sipariş 3 saatten fazla süre geçtiği için iptal edilemez.",
+                    Data = -2 // Hata 
+                };
+            }
+
             try
             {
-                UserOrder orderToCancel = _userOrderRepository.GetOrderById(orderId);
-
-                if (orderToCancel == null)
-                {
-                    return new ResponseModel
-                    {
-                        Success = false,
-                        Message = "Sipariş bulunamadı.",
-                        Data = null
-                    };
-                }
-
-                DateTime orderUtcTime = TimeZoneInfo.ConvertTimeToUtc(orderToCancel.OrderDate);
-                DateTime currentUtcTime = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now);
-                TimeSpan timeElapsed = currentUtcTime - orderUtcTime;
-
-                if (timeElapsed.TotalHours > 3)
-                {
-                    return new ResponseModel
-                    {
-                        Success = false,
-                        Message = "Sipariş 3 saatten fazla süre geçtiği için iptal edilemez.",
-                        Data = null
-                    };
-                }
                 UpdateCartByOrderId(orderToCancel);
                 CancelUserOrder(orderToCancel);
 
-
-
-                return new ResponseModel
+                return new ResponseModel<int>
                 {
                     Success = true,
                     Message = "Sipariş iptal edildi ve sepet güncellendi.",
-                    Data = null
+                    Data = orderId // Başarılı
                 };
             }
             catch (Exception ex)
             {
-                return new ResponseModel
+                return new ResponseModel<int>
                 {
                     Success = false,
                     Message = "Sipariş iptali sırasında bir hata oluştu: " + ex.Message,
-                    Data = null
+                    Data = -3 // Hata 
                 };
             }
         }
 
 
-        public ResponseModel UpdateCartByOrderId(UserOrder order)
+  
+
+
+        public ResponseModel<bool> UpdateCartByOrderId(UserOrder order)
         {
             try
             {
                 int orderId = order.OrderId;
                 _cartRepository.UpdateCartByOrderId(orderId);
-
-                return new ResponseModel
+                return new ResponseModel<bool>
                 {
                     Success = true,
-                    Message = "Cart updated successfully",
-                    Data = null
+                    Message = "Sepet güncellendi.",
+                    Data = true
                 };
             }
             catch (Exception ex)
             {
-                return new ResponseModel
+                Console.WriteLine("Hata Mesajı: " + ex.Message);
+                return new ResponseModel<bool>
                 {
                     Success = false,
-                    Message = "An error occurred while updating the cart: " + ex.Message,
-                    Data = null
+                    Message = "Sepet güncellenirken bir hata oluştu.",
+                    Data = false
                 };
             }
         }
 
-      
 
-        public ResponseModel CancelUserOrder(UserOrder order)
+
+
+        public ResponseModel<bool> CancelUserOrder(UserOrder order)
         {
             try
             {
                 int orderId = order.OrderId;
                 _userOrderRepository.CancelUserOrder(orderId);
-
-                return new ResponseModel
+                return new ResponseModel<bool>
                 {
                     Success = true,
-                    Message = "Order canceled successfully",
-                    Data = null
+                    Message = "Sipariş iptal edildi.",
+                    Data = true
                 };
             }
             catch (Exception ex)
             {
-                return new ResponseModel
+                Console.WriteLine("Hata Mesajı: " + ex.Message);
+                return new ResponseModel<bool>
                 {
                     Success = false,
-                    Message = "An error occurred while canceling the order: " + ex.Message,
-                    Data = null
+                    Message = "Sipariş iptali sırasında bir hata oluştu.",
+                    Data = false
                 };
             }
         }
 
 
-
-
-        public List<UserOrder> GetOrdersByUserId(int userId)
-        {
-            return _userOrderRepository.GetOrdersByUserId(userId);
-        }
-
-        
-        
     }
 }
 
@@ -284,63 +306,3 @@ namespace Koton.Staj.Northwind.Business.Concrete
 
 
 
-//public ResponseModel CreateOrder(int userId, string userAddress, string userPhoneNumber)
-//{
-//    IEnumerable<Cart> carts = _cartRepository.GetCartsByUserId(userId);
-
-//    if (carts != null && carts.Any())
-//    {
-//        using (var transactionScope = new TransactionScope())
-//        {
-//            try
-//            {
-//                foreach (var cart in carts)
-//                {
-//                    UserOrder userOrder = new UserOrder
-//                    {
-//                        UserId = userId,
-//                        Quantity = cart.Quantity,
-//                        ProductId = cart.ProductId,
-//                        UserAddress = userAddress,
-//                        UserPhoneNumber = userPhoneNumber,
-//                        OrderDate = DateTime.Now
-//                    };
-
-//                    InsertUserOrder(userOrder);
-//                    UpdateCart(cart.CartId);
-
-//                }
-
-//                transactionScope.Complete();
-
-//                return new ResponseModel
-//                {
-//                    Success = true,
-//                    Message = Messages.ORDER_CREATED_SUCCESS,
-//                    Data = null
-//                };
-//            }
-//            catch (Exception ex)
-//            {
-//                Console.WriteLine("Hata Mesajı: " + ex.Message);
-
-//                transactionScope.Dispose();
-//                return new ResponseModel
-//                {
-//                    Success = false,
-//                    Message = Messages.ORDER_CREATES_FAILED,
-//                    Data = ex.Message
-//                };
-//            }
-//        }
-//    }
-//    else
-//    {
-//        return new ResponseModel
-//        {
-//            Success = false,
-//            Message = Messages.CART_NOT_FOUND,
-//            Data = null
-//        };
-//    }
-//}

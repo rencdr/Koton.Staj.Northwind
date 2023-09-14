@@ -11,5 +11,7 @@ namespace Koton.Staj.Northwind.Entities
         public int UserId { get; set; }
         public string UserAddress { get; set; }
         public string UserPhoneNumber { get; set; }
+        //public int OrderId { get; set; }
+
     }
 }
