@@ -1,11 +1,13 @@
 ﻿
-using Koton.Staj.Northwind.Entities;
+using Koton.Staj.Northwind.Data.DataUtilities;
+using Koton.Staj.Northwind.Entities.Concrete;
 
 namespace Koton.Staj.Northwind.Data.Abstract
 {
     public interface IUserRepository
     {
-        Task<User> GetUserByUsernameAsync(string username);
-        Task<int> CreateUserAsync(User user);
+        Task<ResponseModel<User>> GetUserByUsernameAsync(string username);
+        Task<ResponseModel<int>> CreateUserAsync(User user);
+
     }
 }

@@ -1,3 +1,4 @@
+using FluentAssertions.Common;
 using FluentValidation;
 using Koton.Staj.Data.Abstract;
 using Koton.Staj.Data.Concrete;
@@ -7,7 +8,7 @@ using Koton.Staj.Northwind.Business.Mapper;
 using Koton.Staj.Northwind.Business.Validation;
 using Koton.Staj.Northwind.Data.Abstract;
 using Koton.Staj.Northwind.Data.Concrete;
-using Koton.Staj.Northwind.Entities;
+using Koton.Staj.Northwind.Entities.Concrete;
 using Koton.Staj.Northwind.Entities.Dtos;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,8 +45,6 @@ builder.Services.AddValidatorsFromAssemblyContaining(typeof(CreateOrderValidator
 
 
 
-
-
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -58,6 +57,10 @@ builder.Services.AddAutoMapper(typeof(ProductProfile));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Cors Con
+builder.Services.AddCors();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -66,6 +69,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+//Cors Con
+app.UseCors(options =>
+{
+    options
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader();
+});
 
 app.UseHttpsRedirection();
 

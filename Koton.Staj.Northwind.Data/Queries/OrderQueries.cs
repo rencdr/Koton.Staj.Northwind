@@ -20,5 +20,11 @@ namespace Koton.Staj.Northwind.Data.Queries
         SELECT *
         FROM   userorders
         WHERE  orderid = @OrderId ";
+
+        internal const string GET_LAST_ORDERID_QUERY = @"
+        SELECT TOP 1 OrderId 
+        FROM UserOrders 
+        WHERE UserId = @userId 
+        ORDER BY OrderId DESC";
     }
 }

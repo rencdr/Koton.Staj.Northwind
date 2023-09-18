@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Koton.Staj.Northwind.Entities
+namespace Koton.Staj.Northwind.Entities.Concrete
 {
     public class OrderRequestModel
     {

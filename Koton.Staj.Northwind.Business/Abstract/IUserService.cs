@@ -1,18 +1,18 @@
 ﻿
 using Koton.Staj.Northwind.Business.Utilities;
-using Koton.Staj.Northwind.Entities;
+using Koton.Staj.Northwind.Entities.Concrete;
 
 namespace Koton.Staj.Northwind.Business.Abstract
 {
     public interface IUserService
     {
-        Task<User> CreateUserAsync(User user);
+        Task<ResponseModel<string>> AuthenticateUserAsync(User user);
 
-        Task<User> GetUserByUsernameAsync(string username);
+        Task<ResponseModel<int>> RegisterUserAsync(User user);
 
-        ResponseModel<string> AuthenticateUser(User user);
+        Task<ResponseModel<User>> CreateUserAsync(User user);
 
-        Task<ResponseModel<int>> RegisterUser(User user);
+        Task<ResponseModel<User>> GetUserByUsernameAsync(string username);
 
 
     }

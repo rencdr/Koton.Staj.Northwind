@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Koton.Staj.Northwind.Entities;
+using Koton.Staj.Northwind.Entities.Concrete;
 using Koton.Staj.Northwind.Entities.Dtos;
 
 namespace Koton.Staj.Northwind.Business.Validation

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Koton.Staj.Northwind.Entities;
+using Koton.Staj.Northwind.Entities.Concrete;
 
 namespace Koton.Staj.Northwind.Business.Mapper
 {

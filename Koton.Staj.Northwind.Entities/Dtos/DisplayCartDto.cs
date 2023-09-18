@@ -12,8 +12,8 @@ namespace Koton.Staj.Northwind.Entities.Dtos
         public decimal TotalCartAmount => Quantity * UnitPrice; // Hesaplama burada yapılıyor
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
-
-
-
+    //    public object Categories { get; set; }
+    //    public object Product { get; set; }
+    
     }
 }

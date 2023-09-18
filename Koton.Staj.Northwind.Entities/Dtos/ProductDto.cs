@@ -10,5 +10,9 @@ namespace Koton.Staj.Northwind.Entities.Dtos
         public string Description { get; set; }
         public decimal UnitPrice { get; set; }
 
+  
+
+
+
     }
 }

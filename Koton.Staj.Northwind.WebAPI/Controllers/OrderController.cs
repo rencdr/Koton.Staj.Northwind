@@ -1,9 +1,9 @@
 ﻿using Koton.Staj.Northwind.Business.Abstract;
 using Microsoft.AspNetCore.Mvc;
-using Koton.Staj.Northwind.Entities;
 using Koton.Staj.Northwind.Data.Abstract;
 using Koton.Staj.Northwind.Business.Utilities;
 using Koton.Staj.Northwind.Business.Concrete;
+using Koton.Staj.Northwind.Entities.Concrete;
 
 namespace Koton.Staj.Northwind.WebAPI.Controllers
 {
@@ -19,35 +19,33 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
             _orderService = orderService;
             _userOrderRepository = userOrderRepository;
         }
-
-
         [HttpPost("createOrder")]
-        public IActionResult CreateOrder([FromBody] OrderRequestModel request)
+        public async Task<IActionResult> CreateOrder([FromBody] OrderRequestModel request)
         {
-            var result = _orderService.CreateOrder(request.UserId, request.UserAddress, request.UserPhoneNumber);
+            var result = await _orderService.CreateOrderAsync(request.UserId, request.UserAddress, request.UserPhoneNumber);
             return result.Success ? Ok(result) : BadRequest(result);
         }
+
 
 
         [HttpGet("getOrdersByUserId")]
-        public IActionResult GetOrdersByUserId(int userId)
+        public async Task<IActionResult> GetOrdersByUserId(int userId)
         {
-            var result = _orderService.GetOrdersByUserId(userId);
+            var result = await _orderService.GetOrdersByUserIdAsync(userId);
 
             return result.Success ? Ok(result) : BadRequest(result);
         }
 
+        
 
         [HttpDelete("cancelOrderByOrderId")]
-        public IActionResult CancelOrder([FromQuery] int orderId)
+        public async Task<IActionResult> CancelOrder([FromQuery] int orderId)
         {
-            var result = _orderService.CancelOrder(orderId);
+            var result = await _orderService.CancelOrderAsync(orderId);
 
             return result.Success ? Ok(result) : BadRequest(result);
-
         }
-
-
+       
 
 
     }

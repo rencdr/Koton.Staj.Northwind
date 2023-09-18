@@ -1,4 +1,4 @@
-﻿namespace Koton.Staj.Northwind.Entities
+﻿namespace Koton.Staj.Northwind.Entities.Concrete
 {
     public class Cart
     {
@@ -11,12 +11,13 @@
         public DateTime? DeletedTime { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
+
         public Product Product { get; set; }
         public int Id { get; set; }
         public string ProductName { get; set; }
         public decimal UnitPrice { get; set; }
 
-        public Categories Categories { get; set; } // Category nesnesi ile ilişkilendirildi
+        public Categories Categories { get; set; } 
         public int CategoryID { get; set; }
         public string CategoryName { get; set; }
         public string Description { get; set; }

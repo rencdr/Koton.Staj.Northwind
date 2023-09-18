@@ -22,71 +22,51 @@ namespace Koton.Staj.Northwind.Business.Concrete
         {
             try
             {
-                var products = _productRepository.GetAllProducts();
-                var productDtos = _mapper.Map<List<ProductDto>>(products);
-
-                return new ResponseModel<List<ProductDto>>
+                var response = _productRepository.GetAllProducts(); 
+                if (response.Success)
                 {
-                    Success = true,
-                    Message = "Ürünler başarıyla alındı.",
-                    Data = productDtos
-                };
+                    var products = response.Data;
+                    var productDtos = _mapper.Map<List<ProductDto>>(products);
+
+                    return new ResponseModel<List<ProductDto>> { Success = true, Message = Messages.PRODUCTS_RETRIEVED_SUCCESS, Data = productDtos };
+                }
+                else
+                {
+                    return new ResponseModel<List<ProductDto>> { Success = false, Message = response.Message, Data = null };
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Hata Mesajı: " + ex.Message);
 
-                return new ResponseModel<List<ProductDto>>
-                {
-                    Success = false,
-                    Message = "Ürünler alınırken bir hata oluştu.",
-                    Data = null
-                };
+                return new ResponseModel<List<ProductDto>> { Success = false, Message = Messages.PRODUCTS_RETRIEVAL_ERROR + ": " + ex.Message, Data = null };
             }
         }
 
 
-        //public List<ProductDto> GetAllProducts()
-        //{
-        //    var products = _productRepository.GetAllProducts();
-        //    var productDtos = _mapper.Map<List<ProductDto>>(products);
-        //    return productDtos;
-        //}
 
         public ResponseModel<List<ProductDto>> GetAllProductsOrderByDescendingPrice()
         {
             try
             {
-                var products = _productRepository.GetAllProductsOrderByDescendingPrice();
-                var productDtos = _mapper.Map<List<ProductDto>>(products);
-
-                return new ResponseModel<List<ProductDto>>
+                var response = _productRepository.GetAllProductsOrderByDescendingPrice(); 
+                if (response.Success)
                 {
-                    Success = true,
-                    Message = "Ürünler başarıyla alındı ve fiyata göre azalan sırada sıralandı.",
-                    Data = productDtos
-                };
+                    var products = response.Data;
+                    var productDtos = _mapper.Map<List<ProductDto>>(products);
+
+                    return new ResponseModel<List<ProductDto>> { Success = true, Message = Messages.PRODUCTS_SORTED_BY_PRICE_DESC, Data = productDtos };
+                }
+                else
+                {
+                    return new ResponseModel<List<ProductDto>> { Success = false, Message = response.Message, Data = null };
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Hata Mesajı: " + ex.Message);
 
-                return new ResponseModel<List<ProductDto>>
-                {
-                    Success = false,
-                    Message = "Ürünler alınırken veya sıralanırken bir hata oluştu.",
-                    Data = null
-                };
+                return new ResponseModel<List<ProductDto>> { Success = false, Message = Messages.PRODUCTS_SORT_ERROR + ": " + ex.Message, Data = null };
             }
         }
-
-
-        //public List<ProductDto> GetAllProductsOrderByDescendingPrice()
-        //{
-        //    var products = _productRepository.GetAllProductsOrderByDescendingPrice();
-        //    var productDtos = _mapper.Map<List<ProductDto>>(products);
-        //    return productDtos;
-        //}
 
 
 
@@ -94,35 +74,28 @@ namespace Koton.Staj.Northwind.Business.Concrete
         {
             try
             {
-                var products = _productRepository.GetAllProductsOrderByAscendingPrice();
-                var productDtos = _mapper.Map<List<ProductDto>>(products);
-
-                return new ResponseModel<List<ProductDto>>
+                var response = _productRepository.GetAllProductsOrderByAscendingPrice(); 
+                if (response.Success)
                 {
-                    Success = true,
-                    Message = "Ürünler başarıyla alındı ve fiyata göre artan sırada sıralandı.",
-                    Data = productDtos
-                };
+                    var products = response.Data;
+                    var productDtos = _mapper.Map<List<ProductDto>>(products);
+
+                    return new ResponseModel<List<ProductDto>> { Success = true, Message = Messages.PRODUCTS_SORTED_BY_PRICE_ASC, Data = productDtos };
+                }
+                else
+                {
+                    return new ResponseModel<List<ProductDto>> { Success = false, Message = response.Message, Data = null };
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Hata Mesajı: " + ex.Message);
 
-                return new ResponseModel<List<ProductDto>>
-                {
-                    Success = false,
-                    Message = "Ürünler alınırken veya sıralanırken bir hata oluştu.",
-                    Data = null
-                };
+                return new ResponseModel<List<ProductDto>> { Success = false, Message = Messages.PRODUCTS_SORT_ERROR + ": " + ex.Message, Data = null };
             }
         }
 
-        //public List<ProductDto> GetAllProductsOrderByAscendingPrice()
-        //{
-        //    var products = _productRepository.GetAllProductsOrderByAscendingPrice();
-        //    var productDtos = _mapper.Map<List<ProductDto>>(products);
-        //    return productDtos;
-        //}
+        
+
     }
 }
 

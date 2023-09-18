@@ -1,5 +1,5 @@
 ﻿using Koton.Staj.Northwind.Business.Abstract;
-using Koton.Staj.Northwind.Entities;
+using Koton.Staj.Northwind.Entities.Concrete;
 using Microsoft.AspNetCore.Mvc;
 
 
@@ -19,22 +19,21 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
             _jwtSecretKey = configuration["JwtSecretKey"];
         }
 
+
         [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody] User user)
+        public async Task<IActionResult> Authenticate([FromBody] User user)
         {
-            var response = _userService.AuthenticateUser(user);
+            var response = await _userService.AuthenticateUserAsync(user);
             return response.Success ? Ok(response) : BadRequest(response);
         }
-
+       
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] User user)
         {
-            var response = await _userService.RegisterUser(user);
-
+            var response = await _userService.RegisterUserAsync(user);
             return response.Success ? Ok(response) : BadRequest(response);
         }
-
 
 
     }

@@ -1,27 +1,27 @@
-﻿
-using Koton.Staj.Northwind.Entities;
-using Koton.Staj.Northwind.Data.Abstract;
+﻿using Koton.Staj.Northwind.Data.Abstract;
+using Koton.Staj.Northwind.Data.DataUtilities;
+using Koton.Staj.Northwind.Entities.Concrete;
 
 namespace Koton.Staj.Data.Abstract
 {
     public interface ICartRepository
     {
-        bool AddToCart(Cart cartItem);
+        ResponseModel<bool> AddToCart(Cart cartItem);
 
-        bool RemoveFromCart(int userId, int productId);
+        ResponseModel<bool> CheckUserExists(int userId);
 
-        List<Cart> GetCartItems(int userId);
+        ResponseModel<bool> RemoveFromCart(int userId, int productId);
 
-        bool DeleteCartByUserId(int userId);
+        ResponseModel<List<Cart>> GetCartItems(int userId);
 
-        Cart GetCartByUserId(int userId);
+        ResponseModel<bool> DeleteCartByUserId(int userId);
 
-        List<Cart> GetCartsByUserId(int userId);
+        ResponseModel<Cart> GetCartByUserId(int userId);
 
-        bool UpdateCart(int cartId);
+        Task<ResponseModel<List<Cart>>> GetCartsByUserIdAsync(int userId);
 
-        bool UpdateCartByOrderId(int orderId);
+        Task<ResponseModel<bool>> UpdateCartAsync(int cartId);
 
-
+        Task<ResponseModel<bool>> UpdateCartByOrderIdAsync(int orderId);
     }
 }

@@ -1,11 +1,14 @@
-﻿using System.Data;
+﻿
+using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using Dapper;
 using Microsoft.Extensions.Configuration;
 using Koton.Staj.Northwind.Data.Abstract;
-using Koton.Staj.Northwind.Entities;
 using Koton.Staj.Northwind.Data.Queries;
-using System.Collections.Generic; // List kullanabilmek için eklenmesi gereken using
+using Koton.Staj.Northwind.Data.DataUtilities;
+using Koton.Staj.Northwind.Entities.Concrete;
 
 namespace Koton.Staj.Northwind.Data.Concrete
 {
@@ -20,41 +23,67 @@ namespace Koton.Staj.Northwind.Data.Concrete
             _connectionString = _configuration["ConnectionStrings:SqlServerDb"];
         }
 
-        public List<Product> GetAllProducts()
+        public ResponseModel<List<Product>> GetAllProducts()
         {
-            using (IDbConnection connection = new SqlConnection(_connectionString))
+            try
             {
-                string sql = ProductQueries.GET_ALL_PRODUCTS_QUERY;
-                return connection.Query<Product>(sql).ToList();
+                using (IDbConnection connection = new SqlConnection(_connectionString))
+                {
+                    string sql = ProductQueries.GET_ALL_PRODUCTS_QUERY;
+                    var products = connection.Query<Product>(sql).ToList();
+
+                    return new ResponseModel<List<Product>> { Success = true, Message = DataMessages.PRODUCT_GET_SUCCESS, Data = products };
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return new ResponseModel<List<Product>> { Success = false, Message = DataMessages.PRODUCT_GET_ERROR, Data = null };
+
             }
         }
 
-        public List<Product> GetAllProductsOrderByDescendingPrice()
+        public ResponseModel<List<Product>> GetAllProductsOrderByDescendingPrice()
         {
-            using (IDbConnection connection = new SqlConnection(_connectionString))
+            try
             {
-                string sql = ProductQueries.GET_ALL_PRODUCTS_ORDER_BY_DESCENDING_PRICE_QUERY;
-                return connection.Query<Product>(sql).ToList();
+                using (IDbConnection connection = new SqlConnection(_connectionString))
+                {
+                    string sql = ProductQueries.GET_ALL_PRODUCTS_ORDER_BY_DESCENDING_PRICE_QUERY;
+                    var products = connection.Query<Product>(sql).ToList();
+
+                    return new ResponseModel<List<Product>> { Success = true, Message = DataMessages.PRODUCT_SORT_SUCCESS_DESC, Data = products };
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return new ResponseModel<List<Product>> { Success = false, Message = DataMessages.PRODUCT_SORT_ERROR, Data = null };
+
             }
         }
 
-        public List<Product> GetAllProductsOrderByAscendingPrice()
+        public ResponseModel<List<Product>> GetAllProductsOrderByAscendingPrice()
         {
-            using (IDbConnection connection = new SqlConnection(_connectionString))
+            try
             {
-                string sql = ProductQueries.GET_ALL_PRODUCTS_ORDER_BY_ASCENDING_PRICE_QUERY;
-                return connection.Query<Product>(sql).ToList();
-            }
-        }
+                using (IDbConnection connection = new SqlConnection(_connectionString))
+                {
+                    string sql = ProductQueries.GET_ALL_PRODUCTS_ORDER_BY_ASCENDING_PRICE_QUERY;
+                    var products = connection.Query<Product>(sql).ToList();
 
-        public Product GetProductById(int productId)
-        {
-            using (IDbConnection connection = new SqlConnection(_connectionString))
+                    return new ResponseModel<List<Product>> { Success = true, Message = DataMessages.PRODUCT_SORT_SUCCESS_ASC, Data = products };
+
+                }
+            }
+            catch (Exception ex)
             {
-                string sql = ProductQueries.GET_PRODUCT_BY_ID_QUERY;
-                return connection.QuerySingleOrDefault<Product>(sql, new { ProductId = productId });
+
+                return new ResponseModel<List<Product>> { Success = false, Message = DataMessages.PRODUCT_SORT_ERROR, Data = null };
+
             }
         }
     }
 }
-

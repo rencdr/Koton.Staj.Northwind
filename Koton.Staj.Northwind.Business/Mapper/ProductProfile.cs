@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Koton.Staj.Northwind.Entities;
+using Koton.Staj.Northwind.Entities.Concrete;
 using Koton.Staj.Northwind.Entities.Dtos;
 
 namespace Koton.Staj.Northwind.Business.Mapper
@@ -14,6 +14,7 @@ namespace Koton.Staj.Northwind.Business.Mapper
                 .ForMember(dest => dest.UnitsInStock, opt => opt.MapFrom(src => src.UnitsInStock))
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.CategoryName))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
+
         }
 
     }

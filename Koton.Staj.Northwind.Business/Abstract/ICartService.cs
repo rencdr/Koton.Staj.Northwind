@@ -1,6 +1,6 @@
 ﻿
 using Koton.Staj.Northwind.Business.Utilities;
-using Koton.Staj.Northwind.Entities;
+using Koton.Staj.Northwind.Entities.Concrete;
 using Koton.Staj.Northwind.Entities.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +16,7 @@ namespace Koton.Staj.Northwind.Business.Abstract
 
         ResponseModel<bool> DeleteCartByUserId(int userId);
 
-        ResponseModel<List<Cart>> GetCartsByUserId(int userId);
+        Task<ResponseModel<List<Cart>>> GetCartsByUserIdAsync(int userId);
 
 
     }

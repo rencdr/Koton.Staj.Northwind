@@ -1,4 +1,4 @@
-﻿namespace Koton.Staj.Northwind.Entities
+﻿namespace Koton.Staj.Northwind.Entities.Concrete
 {
     public class Product
     {

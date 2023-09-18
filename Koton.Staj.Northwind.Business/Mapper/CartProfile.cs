@@ -1,21 +1,22 @@
 ﻿using AutoMapper;
-using Koton.Staj.Northwind.Entities;
+using Koton.Staj.Northwind.Data.DataUtilities;
+using Koton.Staj.Northwind.Entities.Concrete;
 using Koton.Staj.Northwind.Entities.Dtos;
 
-namespace Koton.Staj.Northwind.Business.Mapper
+public class CartProfile : Profile
 {
-    public class CartProfile : Profile
-    {
-        public CartProfile()
-        {
+    public CartProfile()
+    {  
+        CreateMap<Cart, DisplayCartDto>()
+            .ForMember(dest => dest.TotalCartAmount, opt => opt.MapFrom(src => src.Quantity * src.UnitPrice))
+            .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.ProductName))
+            .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice))
+            .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.CategoryName))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description));
 
-            CreateMap<Cart, DisplayCartDto>()
- .ForMember(dest => dest.TotalCartAmount, opt => opt.MapFrom(src => src.Quantity * src.Product.UnitPrice))
- .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.ProductName))
- .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.Product.UnitPrice))
- .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Categories.CategoryName))
- .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Categories.Description));
-
-        }
+        CreateMap<ResponseModel<List<Cart>>, ResponseModel<List<DisplayCartDto>>>()
+            .ForMember(dest => dest.Data, opt => opt.MapFrom(src => src.Data));
     }
 }
+
+

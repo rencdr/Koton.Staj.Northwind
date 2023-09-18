@@ -15,6 +15,7 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
             _productService = productService;
         }
 
+
         [HttpGet("randomList")]
         public IActionResult GetAllProducts()
         {

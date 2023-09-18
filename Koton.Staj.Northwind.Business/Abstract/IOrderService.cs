@@ -1,23 +1,19 @@
-﻿using Koton.Staj.Northwind.Business.Utilities;
-using Koton.Staj.Northwind.Entities;
+﻿
+
+using Koton.Staj.Northwind.Business.Utilities;
+using Koton.Staj.Northwind.Entities.Concrete;
 
 namespace Koton.Staj.Northwind.Business.Abstract
 {
     public interface IOrderService
     {
-        ResponseModel<int> CreateOrder(int userId, string userAddress, string userPhoneNumber);
-
-        ResponseModel<List<UserOrder>> GetOrdersByUserId(int userId);
-
-        ResponseModel<int> CancelOrder(int orderId);
-
-        ResponseModel<bool> InsertUserOrder(UserOrder userOrder);
-
-        ResponseModel<bool> UpdateCart(int cartId);
-
-        ResponseModel<bool> UpdateCartByOrderId(UserOrder order);
-
-        ResponseModel<bool> CancelUserOrder(UserOrder order);
-
+        Task<ResponseModel<int>> CreateOrderAsync(int userId, string userAddress, string userPhoneNumber);
+        Task<ResponseModel<bool>> InsertUserOrderAsync(UserOrder userOrder);
+        Task<ResponseModel<bool>> UpdateCartAsync(int cartId);
+        Task<ResponseModel<List<UserOrder>>> GetOrdersByUserIdAsync(int userId);
+        Task<ResponseModel<int>> CancelOrderAsync(int orderId);
+        Task<ResponseModel<bool>> UpdateCartByOrderIdAsync(UserOrder order);
+        Task<ResponseModel<bool>> CancelUserOrderAsync(UserOrder order);
     }
 }
+
