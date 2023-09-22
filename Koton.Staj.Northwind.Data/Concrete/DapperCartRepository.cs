@@ -20,29 +20,22 @@ namespace Koton.Staj.Data.Concrete
             _configuration = configuration;
             _connectionString = _configuration["ConnectionStrings:SqlServerDb"];
         }
-     
+
 
         public ResponseModel<bool> AddToCart(Cart cartItem)
         {
             var response = new ResponseModel<bool>();
 
-            try
+            using (var connection = new SqlConnection(_connectionString))
             {
-                using (var connection = new SqlConnection(_connectionString))
-                {
-                    var query = CartQueries.ADD_TO_CART_QUERY;
-                    connection.Execute(query, cartItem);
-                    response.Success = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                response.Success = false;
-                response.Message = "Hata Mesajı: " + ex.Message;
+                var query = CartQueries.ADD_TO_CART_QUERY;
+                connection.Execute(query, cartItem);
+                response.Success = true;
             }
 
             return response;
         }
+
 
 
 
@@ -62,109 +55,70 @@ namespace Koton.Staj.Data.Concrete
 
         public ResponseModel<List<Cart>> GetCartItems(int userId)
         {
-            try
+            using (var connection = new SqlConnection(_connectionString))
             {
-                using (var connection = new SqlConnection(_connectionString))
-                {
-                    var query = CartQueries.GET_CART_ITEMS_QUERY;
-                    var cartItems = connection.Query<Cart>(query, new { UserId = userId }).ToList();
-                    return new ResponseModel<List<Cart>> { Success = true, Message = DataMessages.CART_ITEMS_FETCH_SUCCESS, Data = cartItems };
-                }
-            }
-            catch (Exception ex)
-            {
-                return new ResponseModel<List<Cart>> { Success = false, Message = DataMessages.CART_ITEMS_FETCH_ERROR, Data = null };
+                var query = CartQueries.GET_CART_ITEMS_QUERY;
+                var cartItems = connection.Query<Cart>(query, new { UserId = userId }).ToList();
+                return new ResponseModel<List<Cart>> { Success = true, Message = DataMessages.CART_ITEMS_FETCH_SUCCESS, Data = cartItems };
             }
         }
+
 
 
         public ResponseModel<bool> RemoveFromCart(int userId, int productId)
         {
-            try
+            using (var connection = new SqlConnection(_connectionString))
             {
-                using (var connection = new SqlConnection(_connectionString))
-                {
-                    var query = CartQueries.REMOVE_FROM_CART_QUERY;
-                    connection.Execute(query, new { UserId = userId, ProductId = productId });
-                    return new ResponseModel<bool> { Success = true, Message = DataMessages.CART_REMOVE_SUCCESS, Data = true };
-                }
-            }
-            catch (Exception ex)
-            {
-                return new ResponseModel<bool> { Success = false, Message = DataMessages.CART_REMOVE_ERROR, Data = false };
+                var query = CartQueries.REMOVE_FROM_CART_QUERY;
+                connection.Execute(query, new { UserId = userId, ProductId = productId });
+                return new ResponseModel<bool> { Success = true, Message = DataMessages.CART_REMOVE_SUCCESS, Data = true };
             }
         }
+
 
 
         public ResponseModel<bool> DeleteCartByUserId(int userId)
         {
-            try
+            using (var connection = new SqlConnection(_connectionString))
             {
-                using (var connection = new SqlConnection(_connectionString))
-                {
-                    var query = CartQueries.DELETE_CART_QUERY;
-                    connection.Execute(query, new { UserId = userId });
-                    return new ResponseModel<bool> { Success = true, Message = DataMessages.CART_DELETE_SUCCESS, Data = true };
-                }
-            }
-            catch (Exception ex)
-            {
-                return new ResponseModel<bool> { Success = false, Message = DataMessages.CART_DELETE_ERROR, Data = false };
+                var query = CartQueries.DELETE_CART_QUERY;
+                connection.Execute(query, new { UserId = userId });
+                return new ResponseModel<bool> { Success = true, Message = DataMessages.CART_DELETE_SUCCESS, Data = true };
             }
         }
+
 
         public ResponseModel<Cart> GetCartByUserId(int userId)
         {
-            try
-            {
-                using var connection = new SqlConnection(_connectionString);
-                connection.Open();
+            using var connection = new SqlConnection(_connectionString);
+            connection.Open();
 
-                string query = CartQueries.GET_CART_BY_USERID_QUERY;
-                var cart = connection.QueryFirstOrDefault<Cart>(query, new { UserId = userId });
+            string query = CartQueries.GET_CART_BY_USERID_QUERY;
+            var cart = connection.QueryFirstOrDefault<Cart>(query, new { UserId = userId });
 
-                return cart != null
-                    ? new ResponseModel<Cart> { Success = true, Message = DataMessages.CART_GET_SUCCESS, Data = cart }
-                    : new ResponseModel<Cart> { Success = false, Message = DataMessages.CART_NOT_FOUND, Data = null };
-            }
-            catch (Exception ex)
-            {
-                return new ResponseModel<Cart> { Success = false, Message = ex.Message, Data = null };
-            }
+            return cart != null
+                ? new ResponseModel<Cart> { Success = true, Message = DataMessages.CART_GET_SUCCESS, Data = cart }
+                : new ResponseModel<Cart> { Success = false, Message = DataMessages.CART_NOT_FOUND, Data = null };
         }
+
 
 
         public async Task<ResponseModel<List<Cart>>> GetCartsByUserIdAsync(int userId)
         {
-            var response = new ResponseModel<List<Cart>>();
-
-            try
+            using (IDbConnection dbConnection = new SqlConnection(_connectionString))
             {
-                using (IDbConnection dbConnection = new SqlConnection(_connectionString))
-                {
-                    string query = CartQueries.GET_CART_BY_USERID_QUERY;
-                    var carts = await dbConnection.QueryAsync<Cart>(query, new { UserId = userId });
+                string query = CartQueries.GET_CART_BY_USERID_QUERY;
+                var carts = await dbConnection.QueryAsync<Cart>(query, new { UserId = userId });
 
-                    response = new ResponseModel<List<Cart>>
-                    {
-                        Success = true,
-                        Message = DataMessages.CART_ITEMS_FETCH_SUCCESS,
-                        Data = carts.ToList()
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                response = new ResponseModel<List<Cart>>
+                return new ResponseModel<List<Cart>>
                 {
-                    Success = false,
-                    Message = DataMessages.CART_ITEMS_FETCH_ERROR + ex.Message,
-                    Data = null
+                    Success = true,
+                    Message = DataMessages.CART_ITEMS_FETCH_SUCCESS,
+                    Data = carts.ToList()
                 };
             }
-
-            return response;
         }
+
 
 
 
@@ -173,90 +127,73 @@ namespace Koton.Staj.Data.Concrete
         {
             var response = new ResponseModel<bool>();
 
-            try
+            using (IDbConnection dbConnection = new SqlConnection(_connectionString))
             {
-                using (IDbConnection dbConnection = new SqlConnection(_connectionString))
-                {
-                    string updateQuery = CartQueries.UPDATE_CART_QUERY;
-                    int rowsAffected = await dbConnection.ExecuteAsync(updateQuery, new { CartId = cartId });
+                string updateQuery = CartQueries.UPDATE_CART_QUERY;
+                int rowsAffected = await dbConnection.ExecuteAsync(updateQuery, new { CartId = cartId });
 
-                    if (rowsAffected > 0)
-                    {
-                        response.Success = true;
-                        response.Message = DataMessages.CART_UPDATE_SUCCESS;
-                        response.Data = true;
-                    }
-                    else
-                    {
-                        response.Success = false;
-                        response.Message = DataMessages.CART_UPDATE_ERROR;
-                        response.Data = false;
-                    }
+                if (rowsAffected > 0)
+                {
+                    response.Success = true;
+                    response.Message = DataMessages.CART_UPDATE_SUCCESS;
+                    response.Data = true;
                 }
-            }
-            catch (Exception ex)
-            {
-                response.Success = false;
-                response.Message = "Bir hata oluştu: " + ex.Message;
-                response.Data = false;
+                else
+                {
+                    response.Success = false;
+                    response.Message = DataMessages.CART_UPDATE_ERROR;
+                    response.Data = false;
+                }
             }
 
             return response;
         }
+
 
 
         public async Task<ResponseModel<bool>> UpdateCartByOrderIdAsync(int orderId)
         {
             var response = new ResponseModel<bool>();
 
-            try
+
+            using (IDbConnection dbConnection = new SqlConnection(_connectionString))
             {
-                Console.WriteLine("UpdateCartByOrderId");
+                string cartIdsQuery = CartQueries.CARTS_IDS_QUERY;
 
-                using (IDbConnection dbConnection = new SqlConnection(_connectionString))
+                IEnumerable<int> cartIds = await dbConnection.QueryAsync<int>(cartIdsQuery, new { OrderId = orderId });
+
+                if (!cartIds.Any())
                 {
-                    string cartIdsQuery = CartQueries.CARTS_IDS_QUERY;
+                    response.Success = false;
+                    response.Message = "Cart bulunamadı.";
+                    response.Data = false;
+                }
+                else
+                {
+                    string updateQuery = CartQueries.UPDATE_QUERY;
 
-                    IEnumerable<int> cartIds = await dbConnection.QueryAsync<int>(cartIdsQuery, new { OrderId = orderId });
+                    int rowsAffected = await dbConnection.ExecuteAsync(updateQuery, new { CartIds = cartIds });
 
-                    if (!cartIds.Any())
+                    if (rowsAffected <= 0)
                     {
                         response.Success = false;
-                        response.Message = "Cart bulunamadı.";
+                        response.Message = DataMessages.CART_UPDATE_ERROR;
                         response.Data = false;
                     }
                     else
                     {
-                        string updateQuery = CartQueries.UPDATE_QUERY;
-
-                        int rowsAffected = await dbConnection.ExecuteAsync(updateQuery, new { CartIds = cartIds });
-
-                        if (rowsAffected <= 0)
-                        {
-                            response.Success = false;
-                            response.Message = DataMessages.CART_UPDATE_ERROR;
-                            response.Data = false;
-                        }
-                        else
-                        {
-                            response.Success = true;
-                            response.Message = DataMessages.CART_UPDATE_SUCCESS;
-                            response.Data = true;
-                        }
+                        response.Success = true;
+                        response.Message = DataMessages.CART_UPDATE_SUCCESS;
+                        response.Data = true;
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                response.Success = false;
-                response.Message = "Bir hata oluştu: " + ex.Message;
-                response.Data = false;
             }
 
             return response;
         }
 
-       
+
+
 
     }
 

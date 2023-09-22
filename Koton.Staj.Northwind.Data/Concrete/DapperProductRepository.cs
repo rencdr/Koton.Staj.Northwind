@@ -25,65 +25,38 @@ namespace Koton.Staj.Northwind.Data.Concrete
 
         public ResponseModel<List<Product>> GetAllProducts()
         {
-            try
+            using (IDbConnection connection = new SqlConnection(_connectionString))
             {
-                using (IDbConnection connection = new SqlConnection(_connectionString))
-                {
-                    string sql = ProductQueries.GET_ALL_PRODUCTS_QUERY;
-                    var products = connection.Query<Product>(sql).ToList();
+                string sql = ProductQueries.GET_ALL_PRODUCTS_QUERY;
+                var products = connection.Query<Product>(sql).ToList();
 
-                    return new ResponseModel<List<Product>> { Success = true, Message = DataMessages.PRODUCT_GET_SUCCESS, Data = products };
-
-                }
-            }
-            catch (Exception ex)
-            {
-
-                return new ResponseModel<List<Product>> { Success = false, Message = DataMessages.PRODUCT_GET_ERROR, Data = null };
+                return new ResponseModel<List<Product>> { Success = true, Message = DataMessages.PRODUCT_GET_SUCCESS, Data = products };
 
             }
         }
 
         public ResponseModel<List<Product>> GetAllProductsOrderByDescendingPrice()
         {
-            try
+            using (IDbConnection connection = new SqlConnection(_connectionString))
             {
-                using (IDbConnection connection = new SqlConnection(_connectionString))
-                {
-                    string sql = ProductQueries.GET_ALL_PRODUCTS_ORDER_BY_DESCENDING_PRICE_QUERY;
-                    var products = connection.Query<Product>(sql).ToList();
+                string sql = ProductQueries.GET_ALL_PRODUCTS_ORDER_BY_DESCENDING_PRICE_QUERY;
+                var products = connection.Query<Product>(sql).ToList();
 
-                    return new ResponseModel<List<Product>> { Success = true, Message = DataMessages.PRODUCT_SORT_SUCCESS_DESC, Data = products };
-
-                }
-            }
-            catch (Exception ex)
-            {
-
-                return new ResponseModel<List<Product>> { Success = false, Message = DataMessages.PRODUCT_SORT_ERROR, Data = null };
-
+                return new ResponseModel<List<Product>> { Success = true, Message = DataMessages.PRODUCT_SORT_SUCCESS_DESC, Data = products };
             }
         }
+
 
         public ResponseModel<List<Product>> GetAllProductsOrderByAscendingPrice()
         {
-            try
+            using (IDbConnection connection = new SqlConnection(_connectionString))
             {
-                using (IDbConnection connection = new SqlConnection(_connectionString))
-                {
-                    string sql = ProductQueries.GET_ALL_PRODUCTS_ORDER_BY_ASCENDING_PRICE_QUERY;
-                    var products = connection.Query<Product>(sql).ToList();
+                string sql = ProductQueries.GET_ALL_PRODUCTS_ORDER_BY_ASCENDING_PRICE_QUERY;
+                var products = connection.Query<Product>(sql).ToList();
 
-                    return new ResponseModel<List<Product>> { Success = true, Message = DataMessages.PRODUCT_SORT_SUCCESS_ASC, Data = products };
-
-                }
-            }
-            catch (Exception ex)
-            {
-
-                return new ResponseModel<List<Product>> { Success = false, Message = DataMessages.PRODUCT_SORT_ERROR, Data = null };
-
+                return new ResponseModel<List<Product>> { Success = true, Message = DataMessages.PRODUCT_SORT_SUCCESS_ASC, Data = products };
             }
         }
+
     }
 }

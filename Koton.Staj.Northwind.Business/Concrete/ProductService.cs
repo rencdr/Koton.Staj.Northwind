@@ -20,25 +20,17 @@ namespace Koton.Staj.Northwind.Business.Concrete
 
         public ResponseModel<List<ProductDto>> GetAllProducts()
         {
-            try
+            var response = _productRepository.GetAllProducts();
+            if (response.Success)
             {
-                var response = _productRepository.GetAllProducts(); 
-                if (response.Success)
-                {
-                    var products = response.Data;
-                    var productDtos = _mapper.Map<List<ProductDto>>(products);
+                var products = response.Data;
+                var productDtos = _mapper.Map<List<ProductDto>>(products);
 
-                    return new ResponseModel<List<ProductDto>> { Success = true, Message = Messages.PRODUCTS_RETRIEVED_SUCCESS, Data = productDtos };
-                }
-                else
-                {
-                    return new ResponseModel<List<ProductDto>> { Success = false, Message = response.Message, Data = null };
-                }
+                return new ResponseModel<List<ProductDto>> { Success = true, Message = Messages.PRODUCTS_RETRIEVED_SUCCESS, Data = productDtos };
             }
-            catch (Exception ex)
+            else
             {
-
-                return new ResponseModel<List<ProductDto>> { Success = false, Message = Messages.PRODUCTS_RETRIEVAL_ERROR + ": " + ex.Message, Data = null };
+                return new ResponseModel<List<ProductDto>> { Success = false, Message = response.Message, Data = null };
             }
         }
 

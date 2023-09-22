@@ -26,12 +26,11 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
         {
             ResponseModel<List<string>> response = _cartService.AddToCart(cartItem);
 
-            return response.Success
-                ? Ok(new { Success = true, Message = "Product added to cart successfully", Data = response.Data })
-                : BadRequest(new { Success = false, Message = "Validation error", Errors = response.Data });
+            return response.Success ? Ok(response) : BadRequest(response);
+
         }
 
-       
+
 
 
         [HttpGet("getCartItemsByUserId")]
@@ -39,9 +38,8 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
         {
             ResponseModel<List<DisplayCartDto>> response = _cartService.GetCartItems(userId);
 
-            return response.Success
-                ? Ok(new { Success = true, Message = response.Message, Data = response.Data })
-                : BadRequest(new { Success = false, Message = response.Message, Data = response.Data });
+            return response.Success ? Ok(response) : BadRequest(response);
+
         }
 
 
@@ -52,9 +50,8 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
         {
             ResponseModel<bool> response = _cartService.RemoveFromCart(userId, productId);
 
-            return response.Success
-                ? Ok(new { Success = true, Message = response.Message, Data = response.Data })
-                : BadRequest(new { Success = false, Message = response.Message, Data = response.Data });
+            return response.Success ? Ok(response) : BadRequest(response);
+
         }
 
 
@@ -64,10 +61,8 @@ namespace Koton.Staj.Northwind.WebAPI.Controllers
         public IActionResult ClearCart([FromQuery] int userId)
         {
             ResponseModel<bool> response = _cartService.DeleteCartByUserId(userId);
+            return response.Success ? Ok(response) : BadRequest(response);
 
-            return response.Success
-                ? Ok(new { Success = true, Message = response.Message, Data = response.Data })
-                : BadRequest(new { Success = false, Message = response.Message, Data = response.Data });
         }
 
 
